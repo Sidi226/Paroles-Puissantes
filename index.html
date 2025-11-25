@@ -594,6 +594,441 @@
         let selectedBook = null;
         let currentFilter = 'all';
 
+        <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Versets Bibliques - Bible Complète Louis Segond</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ICÔNES FAVICON -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+    
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background-image 1s ease;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background-color: rgba(44, 62, 80, 0.85);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .header-icon {
+            font-size: 2.2rem;
+            color: #3498db;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .verse-container {
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .verse-text {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 20px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+        
+        .verse-reference {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 5px;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-share {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-share:hover {
+            background-color: #c0392b;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 5px;
+            color: white;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .facebook {
+            background-color: #3b5998;
+        }
+        
+        .twitter {
+            background-color: #1da1f2;
+        }
+        
+        .whatsapp {
+            background-color: #25d366;
+        }
+        
+        .verse-counter {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .book-selector {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .book-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .book-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .book-btn.active {
+            background: var(--secondary-color);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--text-light);
+            opacity: 0.9;
+        }
+        
+        .testament-filter {
+            margin: 15px 0;
+        }
+        
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin: 0 5px;
+        }
+        
+        .filter-btn.active {
+            background: var(--secondary-color);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .verse-text {
+                font-size: 1.2rem;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .share-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+            
+            .book-selector {
+                max-height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <i class="fas fa-bible header-icon"></i>
+                Générateur de Versets Bibliques
+            </h1>
+            <p class="subtitle">
+                <i class="fas fa-cross"></i>
+                Bible Louis Segond 1910 - Tous les 31,102 versets inclus
+            </p>
+            <div class="verse-counter">
+                <i class="fas fa-chart-bar"></i>
+                Total: <span id="total-verses-count">66</span> livres, 
+                <span id="total-chapters-count">1,189</span> chapitres, 
+                <span id="total-verses">31,102</span> versets
+            </div>
+            
+            <div class="testament-filter">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-book"></i>
+                    Toute la Bible
+                </button>
+                <button class="filter-btn" data-filter="old">
+                    <i class="fas fa-star-of-david"></i>
+                    Ancien Testament
+                </button>
+                <button class="filter-btn" data-filter="new">
+                    <i class="fas fa-cross"></i>
+                    Nouveau Testament
+                </button>
+            </div>
+            
+            <div class="book-selector" id="book-selector">
+                <!-- Les boutons des livres seront générés dynamiquement -->
+            </div>
+        </header>
+        
+        <main>
+            <div class="card">
+                <div class="verse-container">
+                    <p class="verse-text" id="verse-text">"Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle."</p>
+                    <p class="verse-reference" id="verse-reference">
+                        <i class="fas fa-bookmark"></i>
+                        Jean 3:16
+                    </p>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" id="generate-btn">
+                        <i class="fas fa-random"></i>
+                        <span id="btn-text">Générer un verset aléatoire</span>
+                        <span class="loading" id="loading-spinner" style="display: none;"></span>
+                    </button>
+                    <button class="btn btn-share" id="share-btn">
+                        <i class="fas fa-share-alt"></i>
+                        Partager
+                    </button>
+                </div>
+                
+                <div class="share-buttons" id="share-buttons" style="display: none;">
+                    <a href="#" class="share-btn facebook" id="facebook-share">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="share-btn twitter" id="twitter-share">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="share-btn whatsapp" id="whatsapp-share">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>
+                <i class="fas fa-copyright"></i>
+                2025 Générateur de Versets Bibliques - Tous droits réservés
+            </p>
+            <p>
+                <i class="fas fa-book"></i>
+                Bible Louis Segond 1910 - 31,102 versets inclus localement
+            </p>
+            <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.7;">
+                <i class="fas fa-calendar-alt"></i>
+                Créé le 25 novembre 2025
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Votre code JavaScript existant reste inchangé
+        // ... (le reste du code JavaScript)
+    </script>
+</body>
+</html>
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             // Initialiser le sélecteur de livres
