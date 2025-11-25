@@ -1,981 +1,124 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Versets Bibliques - Bible Complète Louis Segond</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- ICÔNES FAVICON -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
-    
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-            --success-color: #2ecc71;
-            --text-light: #ffffff;
-            --text-dark: #333333;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: var(--dark-color);
-            line-height: 1.6;
-            min-height: 100vh;
-            transition: background-image 1s ease;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: -1;
-        }
-        
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        header {
-            text-align: center;
-            padding: 30px 0;
-            background-color: rgba(44, 62, 80, 0.85);
-            color: white;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(5px);
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .header-icon {
-            font-size: 2.2rem;
-            color: #3498db;
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .verse-container {
-            text-align: center;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .verse-text {
-            font-size: 1.5rem;
-            font-style: italic;
-            margin-bottom: 20px;
-            line-height: 1.8;
-            color: var(--text-dark);
-        }
-        
-        .verse-reference {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--secondary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            margin: 5px;
-            gap: 8px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
-        
-        .btn-share {
-            background-color: var(--accent-color);
-        }
-        
-        .btn-share:hover {
-            background-color: #c0392b;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-        
-        .share-buttons {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
-            gap: 10px;
-        }
-        
-        .share-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin: 0 5px;
-            color: white;
-            font-size: 1.5rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .share-btn:hover {
-            transform: scale(1.1);
-        }
-        
-        .facebook {
-            background-color: #3b5998;
-        }
-        
-        .twitter {
-            background-color: #1da1f2;
-        }
-        
-        .whatsapp {
-            background-color: #25d366;
-        }
-        
-        .verse-counter {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
-        
-        .book-selector {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-            max-height: 120px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        
-        .book-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-        }
-        
-        .book-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .book-btn.active {
-            background: var(--secondary-color);
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plateforme Éducative</title>
 
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: var(--text-light);
-            opacity: 0.9;
-        }
-        
-        .testament-filter {
-            margin: 15px 0;
-        }
-        
-        .filter-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            margin: 0 5px;
-        }
-        
-        .filter-btn.active {
-            background: var(--secondary-color);
-        }
-        
-        .mobile-hidden {
-            display: inline;
-        }
-        
-        /* Styles pour mobile */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .verse-text {
-                font-size: 1.2rem;
-            }
-            
-            .btn {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .share-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 1.3rem;
-            }
-            
-            .book-selector {
-                max-height: 100px;
-            }
-            
-            .controls {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .mobile-hidden {
-                display: none;
-            }
-            
-            .mobile-stack {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 5px;
-            }
-            
-            .testament-filter {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                align-items: center;
-            }
-            
-            .filter-btn {
-                width: 200px;
-                justify-content: center;
-            }
-            
-            .verse-counter {
-                flex-direction: column;
-                gap: 5px;
-                padding: 8px 15px;
-            }
-            
-            .book-btn {
-                font-size: 0.7rem;
-                padding: 4px 8px;
-            }
-        }
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; background:#f5f5f5; }
+  header { background: #4f46e5; color: white; padding: 15px; text-align: center; }
 
-        @media (max-width: 480px) {
-            .container {
-                padding: 10px;
-            }
-            
-            header {
-                padding: 20px 0;
-            }
-            
-            .card {
-                padding: 20px;
-            }
-            
-            .verse-text {
-                font-size: 1.1rem;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .subtitle {
-                font-size: 1rem;
-            }
-        }
-    </style>
+  nav { background: white; padding: 10px; display: flex; gap: 10px; overflow-x:auto; }
+  nav button {
+    padding: 10px;
+    border: none;
+    background: #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  nav button:hover { background: #d1d5db; }
+
+  /* Sections */
+  .section {
+    display: none;
+    padding: 20px;
+    background: white;
+    margin: 15px;
+    border-radius: 10px;
+  }
+
+  .active { display: block; }
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <h1>
-                <i class="fas fa-bible header-icon"></i>
-                Générateur de Versets Bibliques
-            </h1>
-            <p class="subtitle">
-                <i class="fas fa-cross"></i>
-                Bible Louis Segond 1910 - Tous les 31,102 versets inclus
-            </p>
-            <div class="verse-counter mobile-stack">
-                <span>
-                    <i class="fas fa-book"></i>
-                    <span id="total-verses-count">66</span> livres
-                </span>
-                <span class="mobile-hidden">•</span>
-                <span>
-                    <i class="fas fa-file-alt"></i>
-                    <span id="total-chapters-count">1,189</span> chapitres
-                </span>
-                <span class="mobile-hidden">•</span>
-                <span>
-                    <i class="fas fa-verse"></i>
-                    <span id="total-verses">31,102</span> versets
-                </span>
-            </div>
-            
-            <div class="testament-filter">
-                <button class="filter-btn active" data-filter="all">
-                    <i class="fas fa-book"></i>
-                    Toute la Bible
-                </button>
-                <button class="filter-btn" data-filter="old">
-                    <i class="fas fa-star-of-david"></i>
-                    Ancien Testament
-                </button>
-                <button class="filter-btn" data-filter="new">
-                    <i class="fas fa-cross"></i>
-                    Nouveau Testament
-                </button>
-            </div>
-            
-            <div class="book-selector" id="book-selector">
-                <!-- Les boutons des livres seront générés dynamiquement -->
-            </div>
-        </header>
-        
-        <main>
-            <div class="card">
-                <div class="verse-container">
-                    <p class="verse-text" id="verse-text">"Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle."</p>
-                    <p class="verse-reference" id="verse-reference">
-                        <i class="fas fa-bookmark"></i>
-                        Jean 3:16
-                    </p>
-                </div>
-                
-                <div class="controls">
-                    <button class="btn btn-primary" id="generate-btn">
-                        <i class="fas fa-random"></i>
-                        <span id="btn-text">Générer un verset aléatoire</span>
-                        <span class="loading" id="loading-spinner" style="display: none;"></span>
-                    </button>
-                    <button class="btn btn-share" id="share-btn">
-                        <i class="fas fa-share-alt"></i>
-                        Partager
-                    </button>
-                </div>
-                
-                <div class="share-buttons" id="share-buttons" style="display: none;">
-                    <a href="#" class="share-btn facebook" id="facebook-share">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="share-btn twitter" id="twitter-share">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="share-btn whatsapp" id="whatsapp-share">
-                        <i class="fab fa-whatsapp"></i>
-                    </a>
-                </div>
-            </div>
-        </main>
-        
-        <footer>
-            <p>
-                <i class="fas fa-copyright"></i>
-                2025 Générateur de Versets Bibliques - Tous droits réservés
-            </p>
-            <p>
-                <i class="fas fa-book"></i>
-                Bible Louis Segond 1910 - 31,102 versets inclus localement
-            </p>
-            <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.7;">
-                <i class="fas fa-calendar-alt"></i>
-                Créé le 25 novembre 2025
-            </p>
-        </footer>
-    </div>
 
-    <script>
-        // Structure complète de la Bible Louis Segond avec tous les livres et chapitres
-        const bibleStructure = [
-            // Ancien Testament (39 livres)
-            { name: "Genèse", chapters: 50, testament: "old" },
-            { name: "Exode", chapters: 40, testament: "old" },
-            { name: "Lévitique", chapters: 27, testament: "old" },
-            { name: "Nombres", chapters: 36, testament: "old" },
-            { name: "Deutéronome", chapters: 34, testament: "old" },
-            { name: "Josué", chapters: 24, testament: "old" },
-            { name: "Juges", chapters: 21, testament: "old" },
-            { name: "Ruth", chapters: 4, testament: "old" },
-            { name: "1 Samuel", chapters: 31, testament: "old" },
-            { name: "2 Samuel", chapters: 24, testament: "old" },
-            { name: "1 Rois", chapters: 22, testament: "old" },
-            { name: "2 Rois", chapters: 25, testament: "old" },
-            { name: "1 Chroniques", chapters: 29, testament: "old" },
-            { name: "2 Chroniques", chapters: 36, testament: "old" },
-            { name: "Esdras", chapters: 10, testament: "old" },
-            { name: "Néhémie", chapters: 13, testament: "old" },
-            { name: "Esther", chapters: 10, testament: "old" },
-            { name: "Job", chapters: 42, testament: "old" },
-            { name: "Psaumes", chapters: 150, testament: "old" },
-            { name: "Proverbes", chapters: 31, testament: "old" },
-            { name: "Ecclésiaste", chapters: 12, testament: "old" },
-            { name: "Cantique des Cantiques", chapters: 8, testament: "old" },
-            { name: "Ésaïe", chapters: 66, testament: "old" },
-            { name: "Jérémie", chapters: 52, testament: "old" },
-            { name: "Lamentations", chapters: 5, testament: "old" },
-            { name: "Ézéchiel", chapters: 48, testament: "old" },
-            { name: "Daniel", chapters: 12, testament: "old" },
-            { name: "Osée", chapters: 14, testament: "old" },
-            { name: "Joël", chapters: 3, testament: "old" },
-            { name: "Amos", chapters: 9, testament: "old" },
-            { name: "Abdias", chapters: 1, testament: "old" },
-            { name: "Jonas", chapters: 4, testament: "old" },
-            { name: "Michée", chapters: 7, testament: "old" },
-            { name: "Nahum", chapters: 3, testament: "old" },
-            { name: "Habacuc", chapters: 3, testament: "old" },
-            { name: "Sophonie", chapters: 3, testament: "old" },
-            { name: "Aggée", chapters: 2, testament: "old" },
-            { name: "Zacharie", chapters: 14, testament: "old" },
-            { name: "Malachie", chapters: 4, testament: "old" },
-            
-            // Nouveau Testament (27 livres)
-            { name: "Matthieu", chapters: 28, testament: "new" },
-            { name: "Marc", chapters: 16, testament: "new" },
-            { name: "Luc", chapters: 24, testament: "new" },
-            { name: "Jean", chapters: 21, testament: "new" },
-            { name: "Actes", chapters: 28, testament: "new" },
-            { name: "Romains", chapters: 16, testament: "new" },
-            { name: "1 Corinthiens", chapters: 16, testament: "new" },
-            { name: "2 Corinthiens", chapters: 13, testament: "new" },
-            { name: "Galates", chapters: 6, testament: "new" },
-            { name: "Éphésiens", chapters: 6, testament: "new" },
-            { name: "Philippiens", chapters: 4, testament: "new" },
-            { name: "Colossiens", chapters: 4, testament: "new" },
-            { name: "1 Thessaloniciens", chapters: 5, testament: "new" },
-            { name: "2 Thessaloniciens", chapters: 3, testament: "new" },
-            { name: "1 Timothée", chapters: 6, testament: "new" },
-            { name: "2 Timothée", chapters: 4, testament: "new" },
-            { name: "Tite", chapters: 3, testament: "new" },
-            { name: "Philémon", chapters: 1, testament: "new" },
-            { name: "Hébreux", chapters: 13, testament: "new" },
-            { name: "Jacques", chapters: 5, testament: "new" },
-            { name: "1 Pierre", chapters: 5, testament: "new" },
-            { name: "2 Pierre", chapters: 3, testament: "new" },
-            { name: "1 Jean", chapters: 5, testament: "new" },
-            { name: "2 Jean", chapters: 1, testament: "new" },
-            { name: "3 Jean", chapters: 1, testament: "new" },
-            { name: "Jude", chapters: 1, testament: "new" },
-            { name: "Apocalypse", chapters: 22, testament: "new" }
-        ];
+<header>
+  <h1>Plateforme Éducative</h1>
+  <p>Apprendre • Progresser • Réussir</p>
+</header>
 
-        // Base de données complète de la Bible Louis Segond (version simplifiée pour l'exemple)
-        // En réalité, cette base contiendrait tous les 31,102 versets
-        const completeBible = {
-            // Genèse
-            "Genèse": {
-                1: {
-                    1: "Au commencement, Dieu créa les cieux et la terre.",
-                    2: "La terre était informe et vide: il y avait des ténèbres à la surface de l'abîme, et l'esprit de Dieu se mouvait au-dessus des eaux.",
-                    3: "Dieu dit: Que la lumière soit! Et la lumière fut.",
-                    // ... tous les versets du chapitre 1
-                },
-                2: {
-                    1: "Ainsi furent achevés les cieux et la terre, et toute leur armée.",
-                    2: "Dieu acheva au septième jour son œuvre, qu'il avait faite: et il se reposa au septième jour de toute son œuvre, qu'il avait faite.",
-                    // ... etc.
-                },
-                // ... tous les chapitres de la Genèse
-            },
-            // Exode
-            "Exode": {
-                1: {
-                    1: "Voici les noms des fils d'Israël, venus en Égypte avec Jacob et la famille de chacun d'eux:",
-                    2: "Ruben, Siméon, Lévi, Juda,",
-                    // ... etc.
-                },
-                // ... tous les chapitres de l'Exode
-            },
-            // ... tous les livres de la Bible
-        };
+<nav>
+  <button onclick="showSection('dashboard')">🏠 Tableau de bord</button>
+  <button onclick="showSection('cours')">📚 Cours</button>
+  <button onclick="showSection('ressources')">📁 Ressources</button>
+  <button onclick="showSection('evaluations')">📝 Évaluations</button>
+  <button onclick="showSection('forum')">💬 Forum</button>
+  <button onclick="showSection('orientation')">🎯 Orientation</button>
+  <button onclick="showSection('annonces')">📣 Annonces</button>
+  <button onclick="showSection('contact')">☎️ Contact</button>
+</nav>
 
-        // Pour cet exemple, je vais créer une fonction qui génère des versets réalistes
-        // En production, vous auriez une base de données complète avec tous les versets
-        function getRandomVerse(bookName, chapter, verse) {
-            // Cette fonction simule l'accès à une base de données complète
-            // En réalité, vous auriez tous les versets stockés
-            const demoVerses = {
-                "Genèse": {
-                    1: {
-                        1: "Au commencement, Dieu créa les cieux et la terre.",
-                        2: "La terre était informe et vide: il y avait des ténèbres à la surface de l'abîme, et l'esprit de Dieu se mouvait au-dessus des eaux.",
-                        3: "Dieu dit: Que la lumière soit! Et la lumière fut.",
-                        26: "Puis Dieu dit: Faisons l'homme à notre image, selon notre ressemblance, et qu'il domine sur les poissons de la mer, sur les oiseaux du ciel, sur le bétail, sur toute la terre, et sur tous les reptiles qui rampent sur la terre.",
-                        27: "Dieu créa l'homme à son image, il le créa à l'image de Dieu, il créa l'homme et la femme.",
-                        28: "Dieu les bénit, et Dieu leur dit: Soyez féconds, multipliez, remplissez la terre, et l'assujettissez; et dominez sur les poissons de la mer, sur les oiseaux du ciel, et sur tout animal qui se meut sur la terre."
-                    },
-                    50: {
-                        20: "Vous aviez médité de me faire du mal: Dieu l'a changé en bien, pour accomplir ce qui arrive aujourd'hui, pour sauver la vie à un peuple nombreux."
-                    }
-                },
-                "Psaumes": {
-                    23: {
-                        1: "Cantique de David. L'Éternel est mon berger: je ne manquerai de rien.",
-                        2: "Il me fait reposer dans de verts pâturages, Il me dirige près des eaux paisibles.",
-                        3: "Il restaure mon âme, Il me conduit dans les sentiers de la justice, A cause de son nom.",
-                        4: "Quand je marche dans la vallée de l'ombre de la mort, Je ne crains aucun mal, car tu es avec moi: Ta houlette et ton bâton me rassurent."
-                    },
-                    119: {
-                        105: "Ta parole est une lampe à mes pieds, Et une lumière sur mon sentier."
-                    }
-                },
-                "Jean": {
-                    3: {
-                        16: "Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle.",
-                        17: "Dieu, en effet, n'a pas envoyé son Fils dans le monde pour qu'il juge le monde, mais pour que le monde soit sauvé par lui."
-                    },
-                    14: {
-                        6: "Jésus lui dit: Je suis le chemin, la vérité, et la vie. Nul ne vient au Père que par moi."
-                    }
-                },
-                "Romains": {
-                    8: {
-                        28: "Nous savons, du reste, que toutes choses concourent au bien de ceux qui aiment Dieu, de ceux qui sont appelés selon son dessein.",
-                        38: "Car j'ai l'assurance que ni la mort ni la vie, ni les anges ni les dominations, ni les choses présentes ni les choses à venir, ni les puissances,"
-                    }
-                },
-                "1 Corinthiens": {
-                    13: {
-                        4: "La charité est patiente, elle est pleine de bonté; la charité n'est point envieuse; la charité ne se vante point, elle ne s'enfle point d'orgueil,",
-                        13: "Maintenant donc ces trois choses demeurent: la foi, l'espérance, la charité; mais la plus grande de ces choses, c'est la charité."
-                    }
-                },
-                "Philippiens": {
-                    4: {
-                        13: "Je puis tout par celui qui me fortifie.",
-                        6: "Ne vous inquiétez de rien; mais en toute chose faites connaître vos besoins à Dieu par des prières et des supplications, avec des actions de grâces."
-                    }
-                }
-            };
+<!-- ========================= -->
+<!--   SECTIONS FUNCTIONNELLES   -->
+<!-- ========================= -->
 
-            // Si le verset existe dans notre base de démonstration, le retourner
-            if (demoVerses[bookName] && demoVerses[bookName][chapter] && demoVerses[bookName][chapter][verse]) {
-                return demoVerses[bookName][chapter][verse];
-            }
+<div id="dashboard" class="section active">
+  <h2>🏠 Tableau de bord</h2>
+  <p>Bienvenue dans votre espace étudiant. Choisissez une section dans le menu.</p>
+</div>
 
-            // Sinon, générer un verset réaliste basé sur la référence
-            const verseTemplates = [
-                "La parole de l'Éternel fut adressée à son serviteur en ces temps.",
-                "Ainsi parle le Seigneur Dieu d'Israël à son peuple.",
-                "Heureux l'homme qui marche dans la voie de l'Éternel.",
-                "La crainte de l'Éternel est le commencement de la sagesse.",
-                "Que la grâce et la paix vous soient multipliées.",
-                "L'amour de Dieu a été répandu dans nos cœurs.",
-                "Cherchez premièrement le royaume de Dieu et sa justice.",
-                "L'Éternel est mon rocher, ma forteresse, mon libérateur.",
-                "Confie-toi en l'Éternel de tout ton cœur.",
-                "Ta parole est la vérité qui sanctifie."
-            ];
+<div id="cours" class="section">
+  <h2>📚 Cours</h2>
+  <ul>
+    <li>Introduction à la démographie – <button onclick="alert('Cours ouvert !')">Ouvrir</button></li>
+    <li>Statistiques appliquées – <button onclick="alert('Cours ouvert !')">Ouvrir</button></li>
+    <li>Économie du développement – <button onclick="alert('Cours ouvert !')">Ouvrir</button></li>
+  </ul>
+</div>
 
-            return verseTemplates[Math.floor(Math.random() * verseTemplates.length)];
-        }
+<div id="ressources" class="section">
+  <h2>📁 Ressources (PDF / TD / Examens)</h2>
+  <button onclick="alert('Téléchargement...')">📄 Télécharger TD 1</button><br><br>
+  <button onclick="alert('Téléchargement...')">📄 Télécharger examen corrigé</button>
+</div>
 
-        // Catégories pour les images d'arrière-plan
-        const backgroundImages = {
-            "creation": [
-                'https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-                'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ],
-            "nature": [
-                'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-                'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ],
-            "light": [
-                'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-                'https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ],
-            "wisdom": [
-                'https://images.unsplash.com/photo-1518834107812-67d2ce5d6993?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ],
-            "strength": [
-                'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ],
-            "peace": [
-                'https://images.unsplash.com/photo-1517583010307-0eada782b4c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ],
-            "love": [
-                'https://images.unsplash.com/photo-1517583010307-0eada782b4c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ],
-            "hope": [
-                'https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ],
-            "faith": [
-                'https://images.unsplash.com/photo-1518834107812-67d2ce5d6993?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ],
-            "providence": [
-                'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ],
-            "default": [
-                'https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-            ]
-        };
+<div id="evaluations" class="section">
+  <h2>📝 Évaluations</h2>
+  <p>Tests disponibles :</p>
+  <button onclick="alert('Quiz démographie lancé !')">Quiz 1 — Démographie</button><br><br>
+  <button onclick="alert('Quiz statistiques lancé !')">Quiz 2 — Statistiques</button>
+</div>
 
-        // Éléments DOM
-        const verseTextElement = document.getElementById('verse-text');
-        const verseReferenceElement = document.getElementById('verse-reference');
-        const generateButton = document.getElementById('generate-btn');
-        const shareButton = document.getElementById('share-btn');
-        const shareButtonsContainer = document.getElementById('share-buttons');
-        const loadingSpinner = document.getElementById('loading-spinner');
-        const btnText = document.getElementById('btn-text');
-        const bookSelector = document.getElementById('book-selector');
+<div id="forum" class="section">
+  <h2>💬 Forum</h2>
+  <p>Zone d'échanges entre étudiants :</p>
+  <button onclick="alert('Poster un message...')">Écrire une question</button>
+</div>
 
-        // Variables d'état
-        let selectedBook = null;
-        let currentFilter = 'all';
+<div id="orientation" class="section">
+  <h2>🎯 Orientation</h2>
+  <p>Choisissez votre domaine :</p>
+  <ul>
+    <li>Sciences sociales</li>
+    <li>Statistiques & Data</li>
+    <li>Économie et gestion</li>
+    <li>Santé / Médecine</li>
+  </ul>
+</div>
 
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialiser le sélecteur de livres
-            initializeBookSelector();
-            
-            // Définir un arrière-plan initial
-            setRandomBackground();
-            
-            // Ajouter les écouteurs d'événements
-            generateButton.addEventListener('click', generateRandomVerse);
-            shareButton.addEventListener('click', toggleShareButtons);
-            
-            // Configurer les boutons de partage
-            setupShareButtons();
-            
-            // Configurer les filtres
-            setupFilters();
-        });
+<div id="annonces" class="section">
+  <h2>📣 Annonces, bourses, stages</h2>
+  <ul>
+    <li>Bourse d’étude — Deadline 10 décembre</li>
+    <li>Stage en démographie — UNFPA</li>
+  </ul>
+</div>
 
-        // Configurer les filtres par testament
-        function setupFilters() {
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Retirer la classe active de tous les boutons
-                    filterButtons.forEach(b => b.classList.remove('active'));
-                    // Ajouter la classe active au bouton cliqué
-                    this.classList.add('active');
-                    currentFilter = this.dataset.filter;
-                    
-                    // Mettre à jour l'affichage des livres
-                    updateBookDisplay();
-                });
-            });
-        }
+<div id="contact" class="section">
+  <h2>☎️ Contact</h2>
+  <p>Email : support@plateforme.com</p>
+  <button onclick="alert('Message envoyé !')">Envoyer un message</button>
+</div>
 
-        // Mettre à jour l'affichage des livres selon le filtre
-        function updateBookDisplay() {
-            const bookButtons = document.querySelectorAll('.book-btn');
-            bookButtons.forEach(btn => {
-                const bookName = btn.textContent;
-                const book = bibleStructure.find(b => b.name === bookName);
-                
-                if (currentFilter === 'all' || book.testament === currentFilter) {
-                    btn.style.display = 'inline-flex';
-                } else {
-                    btn.style.display = 'none';
-                }
-            });
-        }
+<script>
+function showSection(id) {
+  const sections = document.querySelectorAll('.section');
+  sections.forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
 
-        // Initialiser le sélecteur de livres
-        function initializeBookSelector() {
-            bibleStructure.forEach(book => {
-                const button = document.createElement('button');
-                button.className = 'book-btn';
-                button.innerHTML = `<i class="fas fa-book"></i>${book.name}`;
-                button.dataset.testament = book.testament;
-                button.addEventListener('click', () => selectBook(book.name));
-                bookSelector.appendChild(button);
-            });
-        }
-
-        // Sélectionner un livre spécifique
-        function selectBook(bookName) {
-            selectedBook = selectedBook === bookName ? null : bookName;
-            
-            // Mettre à jour l'interface
-            document.querySelectorAll('.book-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent === bookName && selectedBook === bookName);
-            });
-            
-            if (selectedBook) {
-                btnText.textContent = `Générer verset (${bookName})`;
-            } else {
-                btnText.textContent = 'Générer un verset aléatoire';
-            }
-        }
-
-        // Fonction pour générer un verset aléatoire
-        async function generateRandomVerse() {
-            // Afficher l'indicateur de chargement
-            loadingSpinner.style.display = 'inline-block';
-            btnText.textContent = 'Génération...';
-            generateButton.disabled = true;
-
-            try {
-                let randomBook, randomChapter, randomVerseNumber;
-                
-                if (selectedBook) {
-                    // Générer un verset du livre sélectionné
-                    randomBook = bibleStructure.find(book => book.name === selectedBook);
-                } else {
-                    // Générer un verset aléatoire de toute la Bible
-                    const filteredBooks = currentFilter === 'all' 
-                        ? bibleStructure 
-                        : bibleStructure.filter(book => book.testament === currentFilter);
-                    
-                    randomBook = filteredBooks[Math.floor(Math.random() * filteredBooks.length)];
-                }
-                
-                // Générer un chapitre aléatoire
-                randomChapter = Math.floor(Math.random() * randomBook.chapters) + 1;
-                
-                // Générer un numéro de verset aléatoire (entre 1 et 50 pour cet exemple)
-                // En réalité, vous auriez le nombre exact de versets par chapitre
-                randomVerseNumber = Math.floor(Math.random() * 50) + 1;
-                
-                // Obtenir le texte du verset depuis notre base de données
-                const verseText = getRandomVerse(randomBook.name, randomChapter, randomVerseNumber);
-                
-                verseTextElement.textContent = `"${verseText}"`;
-                verseReferenceElement.innerHTML = `<i class="fas fa-bookmark"></i>${randomBook.name} ${randomChapter}:${randomVerseNumber}`;
-                
-                // Changer l'arrière-plan
-                setRandomBackground();
-                
-            } catch (error) {
-                console.error('Erreur:', error);
-                // Utiliser des versets de démonstration en cas d'erreur
-                const demoVerses = getDemoVerses();
-                const randomDemoVerse = demoVerses[Math.floor(Math.random() * demoVerses.length)];
-                verseTextElement.textContent = `"${randomDemoVerse.text}"`;
-                verseReferenceElement.innerHTML = `<i class="fas fa-bookmark"></i>${randomDemoVerse.book} ${randomDemoVerse.chapter}:${randomDemoVerse.verse}`;
-            } finally {
-                // Masquer l'indicateur de chargement
-                loadingSpinner.style.display = 'none';
-                btnText.textContent = selectedBook ? `Générer verset (${selectedBook})` : 'Générer un verset aléatoire';
-                generateButton.disabled = false;
-                
-                // Masquer les boutons de partage
-                shareButtonsContainer.style.display = 'none';
-            }
-        }
-
-        // Versets de démonstration (utilisés si l'API échoue)
-        function getDemoVerses() {
-            return [
-                { book: "Genèse", chapter: 1, verse: 1, text: "Au commencement, Dieu créa les cieux et la terre." },
-                { book: "Genèse", chapter: 1, verse: 27, text: "Dieu créa l'homme à son image, il le créa à l'image de Dieu, il créa l'homme et la femme." },
-                { book: "Psaumes", chapter: 23, verse: 1, text: "L'Éternel est mon berger : je ne manquerai de rien." },
-                { book: "Psaumes", chapter: 119, verse: 105, text: "Ta parole est une lampe à mes pieds, et une lumière sur mon sentier." },
-                { book: "Proverbes", chapter: 3, verse: 5, text: "Confie-toi en l'Éternel de tout ton cœur, et ne t'appuie pas sur ta sagesse." },
-                { book: "Ésaïe", chapter: 40, verse: 31, text: "Mais ceux qui se confient en l'Éternel renouvellent leur force. Ils prennent le vol comme les aigles; Ils courent, et ne se lassent point, Ils marchent, et ne se fatiguent point." },
-                { book: "Jérémie", chapter: 29, verse: 11, text: "Car je connais les projets que j'ai formés sur vous, dit l'Éternel, projets de paix et non de malheur, afin de vous donner un avenir et de l'espérance." },
-                { book: "Matthieu", chapter: 5, verse: 16, text: "Que votre lumière luise ainsi devant les hommes, afin qu'ils voient vos bonnes œuvres, et qu'ils glorifient votre Père qui est dans les cieux." },
-                { book: "Matthieu", chapter: 11, verse: 28, text: "Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos." },
-                { book: "Jean", chapter: 3, verse: 16, text: "Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle." },
-                { book: "Jean", chapter: 14, verse: 6, text: "Jésus lui dit : Je suis le chemin, la vérité, et la vie. Nul ne vient au Père que par moi." },
-                { book: "Romains", chapter: 8, verse: 28, text: "Nous savons, du reste, que toutes choses concourent au bien de ceux qui aiment Dieu, de ceux qui sont appelés selon son dessein." },
-                { book: "1 Corinthiens", chapter: 13, verse: 4, text: "La charité est patiente, elle est pleine de bonté; la charité n'est point envieuse; la charité ne se vante point, elle ne s'enfle point d'orgueil." },
-                { book: "Galates", chapter: 5, verse: 22, text: "Mais le fruit de l'Esprit, c'est l'amour, la joie, la paix, la patience, la bonté, la bénignité, la fidélité." },
-                { book: "Philippiens", chapter: 4, verse: 13, text: "Je puis tout par celui qui me fortifie." },
-                { book: "Hébreux", chapter: 11, verse: 1, text: "Or la foi est une ferme assurance des choses qu'on espère, une démonstration de celles qu'on ne voit pas." },
-                { book: "1 Jean", chapter: 4, verse: 8, text: "Celui qui n'aime pas n'a pas connu Dieu, car Dieu est amour." }
-            ];
-        }
-
-        // Fonction pour basculer l'affichage des boutons de partage
-        function toggleShareButtons() {
-            if (verseReferenceElement.textContent === '') {
-                alert('Veuillez d\'abord générer un verset à partager.');
-                return;
-            }
-            
-            if (shareButtonsContainer.style.display === 'none' || shareButtonsContainer.style.display === '') {
-                shareButtonsContainer.style.display = 'flex';
-            } else {
-                shareButtonsContainer.style.display = 'none';
-            }
-        }
-
-        // Fonction pour configurer les boutons de partage
-        function setupShareButtons() {
-            const facebookShare = document.getElementById('facebook-share');
-            const twitterShare = document.getElementById('twitter-share');
-            const whatsappShare = document.getElementById('whatsapp-share');
-            
-            facebookShare.addEventListener('click', function(e) {
-                e.preventDefault();
-                shareOnFacebook();
-            });
-            
-            twitterShare.addEventListener('click', function(e) {
-                e.preventDefault();
-                shareOnTwitter();
-            });
-            
-            whatsappShare.addEventListener('click', function(e) {
-                e.preventDefault();
-                shareOnWhatsApp();
-            });
-        }
-
-        // Fonctions de partage
-        function shareOnFacebook() {
-            const verseText = verseTextElement.textContent;
-            const verseReference = verseReferenceElement.textContent;
-            const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(`${verseText} - ${verseReference}`)}`;
-            window.open(shareUrl, '_blank', 'width=600,height=400');
-        }
-
-        function shareOnTwitter() {
-            const verseText = verseTextElement.textContent;
-            const verseReference = verseReferenceElement.textContent;
-            const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${verseText} - ${verseReference}`)}&url=${encodeURIComponent(window.location.href)}`;
-            window.open(shareUrl, '_blank', 'width=600,height=400');
-        }
-
-        function shareOnWhatsApp() {
-            const verseText = verseTextElement.textContent;
-            const verseReference = verseReferenceElement.textContent;
-            const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${verseText} - ${verseReference} ${window.location.href}`)}`;
-            window.open(shareUrl, '_blank', 'width=600,height=400');
-        }
-
-        // Fonction pour définir un arrière-plan aléatoire
-        function setRandomBackground() {
-            // Obtenir toutes les catégories disponibles
-            const categories = Object.keys(backgroundImages);
-            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-            
-            // Sélectionner une image aléatoire dans cette catégorie
-            const images = backgroundImages[randomCategory];
-            const randomImage = images[Math.floor(Math.random() * images.length)];
-            
-            document.body.style.backgroundImage = `url('${randomImage}')`;
-        }
-    </script>
 </body>
 </html>
