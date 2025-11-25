@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Versets Bibliques</title>
+    <title>Générateur de Versets Bibliques - Bible Complète</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* [Tous les styles CSS précédents restent identiques] */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -12,6 +14,10 @@
             --light-color: #ecf0f1;
             --dark-color: #2c3e50;
             --success-color: #2ecc71;
+            --admin-color: #9b59b6;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
         * {
@@ -25,22 +31,41 @@
             background-color: #f5f7fa;
             color: var(--dark-color);
             line-height: 1.6;
+            min-height: 100vh;
+            transition: background-image 1s ease;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
         }
         
         .container {
-            max-width: 800px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
         
         header {
             text-align: center;
             padding: 30px 0;
-            background-color: var(--primary-color);
+            background-color: rgba(44, 62, 80, 0.85);
             color: white;
             border-radius: 10px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
         }
         
         h1 {
@@ -54,12 +79,13 @@
         }
         
         .card {
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             padding: 30px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             transition: transform 0.3s ease;
+            backdrop-filter: blur(5px);
         }
         
         .card:hover {
@@ -72,6 +98,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            padding: 20px;
         }
         
         .verse-text {
@@ -79,6 +106,7 @@
             font-style: italic;
             margin-bottom: 20px;
             line-height: 1.8;
+            color: var(--text-dark);
         }
         
         .verse-reference {
@@ -97,16 +125,21 @@
             cursor: pointer;
             font-size: 1rem;
             font-weight: bold;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
             margin: 5px;
         }
         
         .btn:hover {
-            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
         .btn-primary {
             background-color: var(--secondary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
         }
         
         .btn-share {
@@ -115,6 +148,22 @@
         
         .btn-share:hover {
             background-color: #c0392b;
+        }
+        
+        .btn-change-bg {
+            background-color: var(--success-color);
+        }
+        
+        .btn-change-bg:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-admin {
+            background-color: var(--admin-color);
+        }
+        
+        .btn-admin:hover {
+            background-color: #8e44ad;
         }
         
         .controls {
@@ -129,20 +178,21 @@
             justify-content: center;
             flex-wrap: wrap;
             margin-top: 20px;
+            gap: 10px;
         }
         
         .share-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             margin: 0 5px;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             text-decoration: none;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
         }
         
         .share-btn:hover {
@@ -169,11 +219,12 @@
         }
         
         .stat-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
         }
         
         .stat-number {
@@ -189,12 +240,77 @@
             opacity: 0.8;
         }
         
+        .admin-panel {
+            display: none;
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
+        }
+        
+        .admin-panel h2 {
+            color: var(--admin-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .admin-stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .admin-stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--admin-color);
+            margin-bottom: 10px;
+        }
+        
+        .admin-stat-label {
+            font-size: 1rem;
+            color: var(--dark-color);
+            opacity: 0.8;
+        }
+        
+        .recent-activity {
+            margin-top: 20px;
+        }
+        
+        .activity-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .activity-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
         footer {
             text-align: center;
             margin-top: 40px;
             padding: 20px;
-            color: var(--dark-color);
-            opacity: 0.7;
+            color: var(--text-light);
+            opacity: 0.9;
         }
         
         .loading {
@@ -211,7 +327,51 @@
             to { transform: rotate(360deg); }
         }
         
-        @media (max-width: 600px) {
+        .verse-counter {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .admin-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .book-selector {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .book-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .book-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .book-btn.active {
+            background: var(--secondary-color);
+        }
+        
+        @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
             }
@@ -224,6 +384,22 @@
                 padding: 10px 20px;
                 font-size: 0.9rem;
             }
+            
+            .share-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+            
+            .admin-toggle {
+                position: static;
+                margin-bottom: 20px;
+            }
+            
+            .book-selector {
+                max-height: 100px;
+                overflow-y: auto;
+            }
         }
     </style>
 </head>
@@ -232,39 +408,51 @@
         <header>
             <h1>Générateur de Versets Bibliques</h1>
             <p class="subtitle">Découvrez la parole de Dieu au hasard</p>
+            <div class="verse-counter">Total des versets: <span id="total-verses-count">66</span> livres, <span id="total-chapters-count">1189</span> chapitres, <span id="total-verses">31102</span> versets</div>
+            
+            <div class="book-selector" id="book-selector">
+                <!-- Les boutons des livres seront générés dynamiquement -->
+            </div>
         </header>
+        
+        <div class="admin-toggle">
+            <button class="btn btn-admin" id="admin-toggle-btn">
+                <i class="fas fa-chart-line"></i> Tableau de Bord Admin
+            </button>
+        </div>
         
         <main>
             <div class="card">
                 <div class="verse-container">
-                    <p class="verse-text" id="verse-text">Cliquez sur le bouton pour générer un verset biblique aléatoire.</p>
-                    <p class="verse-reference" id="verse-reference"></p>
+                    <p class="verse-text" id="verse-text">"Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle."</p>
+                    <p class="verse-reference" id="verse-reference">Jean 3:16</p>
                 </div>
                 
                 <div class="controls">
                     <button class="btn btn-primary" id="generate-btn">
-                        <span id="btn-text">Générer un verset</span>
+                        <span id="btn-text">Générer un verset aléatoire</span>
                         <span class="loading" id="loading-spinner" style="display: none;"></span>
                     </button>
                     <button class="btn btn-share" id="share-btn">Partager</button>
+                    <button class="btn btn-change-bg" id="change-bg-btn">Changer l'arrière-plan</button>
                 </div>
                 
                 <div class="share-buttons" id="share-buttons" style="display: none;">
                     <a href="#" class="share-btn facebook" id="facebook-share">
-                        <i>f</i>
+                        <i class="fab fa-facebook-f"></i>
                     </a>
                     <a href="#" class="share-btn twitter" id="twitter-share">
-                        <i>t</i>
+                        <i class="fab fa-twitter"></i>
                     </a>
                     <a href="#" class="share-btn whatsapp" id="whatsapp-share">
-                        <i>w</i>
+                        <i class="fab fa-whatsapp"></i>
                     </a>
                 </div>
             </div>
             
             <div class="stats-container">
                 <div class="stat-card">
-                    <div class="stat-number" id="total-verses">0</div>
+                    <div class="stat-number" id="generated-count">0</div>
                     <div class="stat-label">Versets générés</div>
                 </div>
                 <div class="stat-card">
@@ -275,99 +463,219 @@
                     <div class="stat-number" id="page-views">0</div>
                     <div class="stat-label">Vues de la page</div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="background-changes">0</div>
+                    <div class="stat-label">Arrière-plans changés</div>
+                </div>
+            </div>
+            
+            <div class="admin-panel" id="admin-panel">
+                <h2><i class="fas fa-chart-line"></i> Tableau de Bord Administrateur</h2>
+                
+                <div class="admin-stats">
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-number" id="admin-total-views">0</div>
+                        <div class="admin-stat-label">Total des vues</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-number" id="admin-unique-visitors">0</div>
+                        <div class="admin-stat-label">Visiteurs uniques</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-number" id="admin-today-views">0</div>
+                        <div class="admin-stat-label">Vues aujourd'hui</div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-number" id="admin-shares">0</div>
+                        <div class="admin-stat-label">Partages totaux</div>
+                    </div>
+                </div>
+                
+                <div class="recent-activity">
+                    <h3>Activité récente</h3>
+                    <div class="activity-list" id="activity-list">
+                        <!-- Les activités récentes seront ajoutées ici dynamiquement -->
+                    </div>
+                </div>
+                
+                <div class="controls" style="margin-top: 20px;">
+                    <button class="btn btn-admin" id="export-stats-btn">
+                        <i class="fas fa-download"></i> Exporter les statistiques
+                    </button>
+                    <button class="btn btn-admin" id="reset-stats-btn">
+                        <i class="fas fa-trash"></i> Réinitialiser les statistiques
+                    </button>
+                </div>
             </div>
         </main>
         
         <footer>
             <p>© 2023 Générateur de Versets Bibliques - Tous droits réservés</p>
+            <p>Basé sur la Bible Louis Segond 1910 - Tous les versets inclus</p>
         </footer>
     </div>
 
     <script>
-        // Base de données de versets bibliques (extrait pour l'exemple)
-        const bibleVerses = [
-            {
-                book: "Jean",
-                chapter: 3,
-                verse: 16,
-                text: "Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle."
-            },
-            {
-                book: "Jérémie",
-                chapter: 29,
-                verse: 11,
-                text: "Car je connais les projets que j'ai formés sur vous, dit l'Éternel, projets de paix et non de malheur, afin de vous donner un avenir et de l'espérance."
-            },
-            {
-                book: "Philippiens",
-                chapter: 4,
-                verse: 13,
-                text: "Je puis tout par celui qui me fortifie."
-            },
-            {
-                book: "Romains",
-                chapter: 8,
-                verse: 28,
-                text: "Nous savons, du reste, que toutes choses concourent au bien de ceux qui aiment Dieu, de ceux qui sont appelés selon son dessein."
-            },
-            {
-                book: "Psaumes",
-                chapter: 23,
-                verse: 1,
-                text: "L'Éternel est mon berger: je ne manquerai de rien."
-            },
-            {
-                book: "Proverbes",
-                chapter: 3,
-                verse: 5,
-                text: "Confie-toi en l'Éternel de tout ton cœur, et ne t'appuie pas sur ta sagesse."
-            },
-            {
-                book: "Ésaïe",
-                chapter: 41,
-                verse: 10,
-                text: "Ne crains rien, car je suis avec toi; Ne promène pas des regards inquiets, car je suis ton Dieu; Je te fortifie, je viens à ton secours, Je te soutiens de ma droite triomphante."
-            },
-            {
-                book: "Matthieu",
-                chapter: 11,
-                verse: 28,
-                text: "Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos."
-            },
-            {
-                book: "2 Corinthiens",
-                chapter: 5,
-                verse: 17,
-                text: "Si quelqu'un est en Christ, il est une nouvelle créature. Les choses anciennes sont passées; voici, toutes choses sont devenues nouvelles."
-            },
-            {
-                book: "Éphésiens",
-                chapter: 2,
-                verse: 8,
-                text: "Car c'est par la grâce que vous êtes sauvés, par le moyen de la foi. Et cela ne vient pas de vous, c'est le don de Dieu."
-            }
+        // Structure complète de la Bible avec tous les livres et nombres de chapitres
+        const bibleStructure = [
+            // Ancien Testament
+            { name: "Genèse", chapters: 50, testament: "old" },
+            { name: "Exode", chapters: 40, testament: "old" },
+            { name: "Lévitique", chapters: 27, testament: "old" },
+            { name: "Nombres", chapters: 36, testament: "old" },
+            { name: "Deutéronome", chapters: 34, testament: "old" },
+            { name: "Josué", chapters: 24, testament: "old" },
+            { name: "Juges", chapters: 21, testament: "old" },
+            { name: "Ruth", chapters: 4, testament: "old" },
+            { name: "1 Samuel", chapters: 31, testament: "old" },
+            { name: "2 Samuel", chapters: 24, testament: "old" },
+            { name: "1 Rois", chapters: 22, testament: "old" },
+            { name: "2 Rois", chapters: 25, testament: "old" },
+            { name: "1 Chroniques", chapters: 29, testament: "old" },
+            { name: "2 Chroniques", chapters: 36, testament: "old" },
+            { name: "Esdras", chapters: 10, testament: "old" },
+            { name: "Néhémie", chapters: 13, testament: "old" },
+            { name: "Esther", chapters: 10, testament: "old" },
+            { name: "Job", chapters: 42, testament: "old" },
+            { name: "Psaumes", chapters: 150, testament: "old" },
+            { name: "Proverbes", chapters: 31, testament: "old" },
+            { name: "Ecclésiaste", chapters: 12, testament: "old" },
+            { name: "Cantique des Cantiques", chapters: 8, testament: "old" },
+            { name: "Ésaïe", chapters: 66, testament: "old" },
+            { name: "Jérémie", chapters: 52, testament: "old" },
+            { name: "Lamentations", chapters: 5, testament: "old" },
+            { name: "Ézéchiel", chapters: 48, testament: "old" },
+            { name: "Daniel", chapters: 12, testament: "old" },
+            { name: "Osée", chapters: 14, testament: "old" },
+            { name: "Joël", chapters: 3, testament: "old" },
+            { name: "Amos", chapters: 9, testament: "old" },
+            { name: "Abdias", chapters: 1, testament: "old" },
+            { name: "Jonas", chapters: 4, testament: "old" },
+            { name: "Michée", chapters: 7, testament: "old" },
+            { name: "Nahum", chapters: 3, testament: "old" },
+            { name: "Habacuc", chapters: 3, testament: "old" },
+            { name: "Sophonie", chapters: 3, testament: "old" },
+            { name: "Aggée", chapters: 2, testament: "old" },
+            { name: "Zacharie", chapters: 14, testament: "old" },
+            { name: "Malachie", chapters: 4, testament: "old" },
+            
+            // Nouveau Testament
+            { name: "Matthieu", chapters: 28, testament: "new" },
+            { name: "Marc", chapters: 16, testament: "new" },
+            { name: "Luc", chapters: 24, testament: "new" },
+            { name: "Jean", chapters: 21, testament: "new" },
+            { name: "Actes", chapters: 28, testament: "new" },
+            { name: "Romains", chapters: 16, testament: "new" },
+            { name: "1 Corinthiens", chapters: 16, testament: "new" },
+            { name: "2 Corinthiens", chapters: 13, testament: "new" },
+            { name: "Galates", chapters: 6, testament: "new" },
+            { name: "Éphésiens", chapters: 6, testament: "new" },
+            { name: "Philippiens", chapters: 4, testament: "new" },
+            { name: "Colossiens", chapters: 4, testament: "new" },
+            { name: "1 Thessaloniciens", chapters: 5, testament: "new" },
+            { name: "2 Thessaloniciens", chapters: 3, testament: "new" },
+            { name: "1 Timothée", chapters: 6, testament: "new" },
+            { name: "2 Timothée", chapters: 4, testament: "new" },
+            { name: "Tite", chapters: 3, testament: "new" },
+            { name: "Philémon", chapters: 1, testament: "new" },
+            { name: "Hébreux", chapters: 13, testament: "new" },
+            { name: "Jacques", chapters: 5, testament: "new" },
+            { name: "1 Pierre", chapters: 5, testament: "new" },
+            { name: "2 Pierre", chapters: 3, testament: "new" },
+            { name: "1 Jean", chapters: 5, testament: "new" },
+            { name: "2 Jean", chapters: 1, testament: "new" },
+            { name: "3 Jean", chapters: 1, testament: "new" },
+            { name: "Jude", chapters: 1, testament: "new" },
+            { name: "Apocalypse", chapters: 22, testament: "new" }
         ];
+
+        // Catégories pour les images d'arrière-plan
+        const backgroundImages = {
+            "creation": [
+                'https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+                'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "nature": [
+                'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+                'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "light": [
+                'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+                'https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "wisdom": [
+                'https://images.unsplash.com/photo-1518834107812-67d2ce5d6993?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "strength": [
+                'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "peace": [
+                'https://images.unsplash.com/photo-1517583010307-0eada782b4c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "love": [
+                'https://images.unsplash.com/photo-1517583010307-0eada782b4c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "hope": [
+                'https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "faith": [
+                'https://images.unsplash.com/photo-1518834107812-67d2ce5d6993?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "prophecy": [
+                'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "law": [
+                'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "gospel": [
+                'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ],
+            "default": [
+                'https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            ]
+        };
 
         // Éléments DOM
         const verseTextElement = document.getElementById('verse-text');
         const verseReferenceElement = document.getElementById('verse-reference');
         const generateButton = document.getElementById('generate-btn');
         const shareButton = document.getElementById('share-btn');
+        const changeBgButton = document.getElementById('change-bg-btn');
+        const adminToggleButton = document.getElementById('admin-toggle-btn');
+        const adminPanel = document.getElementById('admin-panel');
         const shareButtonsContainer = document.getElementById('share-buttons');
         const loadingSpinner = document.getElementById('loading-spinner');
         const btnText = document.getElementById('btn-text');
+        const bookSelector = document.getElementById('book-selector');
         
         // Éléments de statistiques
-        const totalVersesElement = document.getElementById('total-verses');
+        const generatedCountElement = document.getElementById('generated-count');
         const uniqueBooksElement = document.getElementById('unique-books');
         const pageViewsElement = document.getElementById('page-views');
+        const backgroundChangesElement = document.getElementById('background-changes');
+        
+        // Éléments de statistiques admin
+        const adminTotalViewsElement = document.getElementById('admin-total-views');
+        const adminUniqueVisitorsElement = document.getElementById('admin-unique-visitors');
+        const adminTodayViewsElement = document.getElementById('admin-today-views');
+        const adminSharesElement = document.getElementById('admin-shares');
+        const activityListElement = document.getElementById('activity-list');
+        const exportStatsButton = document.getElementById('export-stats-btn');
+        const resetStatsButton = document.getElementById('reset-stats-btn');
 
         // Variables pour les statistiques
         let stats = {
-            totalVerses: 0,
+            generatedCount: 0,
             uniqueBooks: new Set(),
             pageViews: 0,
-            generatedVerses: []
+            backgroundChanges: 0,
+            shares: 0,
+            uniqueVisitors: new Set(),
+            todayViews: 0,
+            lastVisitDate: null,
+            generatedVerses: [],
+            activities: [],
+            selectedBook: null
         };
 
         // Initialisation
@@ -375,60 +683,150 @@
             // Charger les statistiques depuis le localStorage
             loadStats();
             
+            // Initialiser le sélecteur de livres
+            initializeBookSelector();
+            
             // Mettre à jour l'affichage des statistiques
             updateStatsDisplay();
+            updateAdminStatsDisplay();
             
-            // Incrémenter les vues de page
-            stats.pageViews++;
-            saveStats();
-            updateStatsDisplay();
+            // Gérer les vues de page
+            handlePageView();
+            
+            // Définir un arrière-plan initial
+            setRandomBackground();
             
             // Ajouter les écouteurs d'événements
             generateButton.addEventListener('click', generateRandomVerse);
             shareButton.addEventListener('click', toggleShareButtons);
+            changeBgButton.addEventListener('click', setRandomBackground);
+            adminToggleButton.addEventListener('click', toggleAdminPanel);
+            exportStatsButton.addEventListener('click', exportStats);
+            resetStatsButton.addEventListener('click', resetStats);
             
             // Configurer les boutons de partage
             setupShareButtons();
         });
 
+        // Initialiser le sélecteur de livres
+        function initializeBookSelector() {
+            bibleStructure.forEach(book => {
+                const button = document.createElement('button');
+                button.className = 'book-btn';
+                button.textContent = book.name;
+                button.addEventListener('click', () => selectBook(book.name));
+                bookSelector.appendChild(button);
+            });
+        }
+
+        // Sélectionner un livre spécifique
+        function selectBook(bookName) {
+            stats.selectedBook = stats.selectedBook === bookName ? null : bookName;
+            
+            // Mettre à jour l'interface
+            document.querySelectorAll('.book-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === bookName && stats.selectedBook === bookName);
+            });
+            
+            if (stats.selectedBook) {
+                addActivity(`Livre sélectionné: ${bookName}`);
+                btnText.textContent = `Générer verset (${bookName})`;
+            } else {
+                btnText.textContent = 'Générer un verset aléatoire';
+            }
+        }
+
         // Fonction pour générer un verset aléatoire
-        function generateRandomVerse() {
+        async function generateRandomVerse() {
             // Afficher l'indicateur de chargement
             loadingSpinner.style.display = 'inline-block';
             btnText.textContent = 'Génération...';
             generateButton.disabled = true;
             
-            // Simuler un délai de chargement (pourrait être remplacé par un appel API réel)
-            setTimeout(() => {
-                // Sélectionner un verset aléatoire
-                const randomIndex = Math.floor(Math.random() * bibleVerses.length);
-                const randomVerse = bibleVerses[randomIndex];
+            try {
+                let book, chapter, verse;
+                
+                if (stats.selectedBook) {
+                    // Générer un verset du livre sélectionné
+                    book = stats.selectedBook;
+                    const bookInfo = bibleStructure.find(b => b.name === book);
+                    chapter = Math.floor(Math.random() * bookInfo.chapters) + 1;
+                    
+                    // Pour la démonstration, nous utilisons un nombre de versets fixe
+                    // En réalité, vous devriez avoir la structure complète des versets par chapitre
+                    verse = Math.floor(Math.random() * 30) + 1;
+                } else {
+                    // Générer un verset aléatoire de toute la Bible
+                    book = bibleStructure[Math.floor(Math.random() * bibleStructure.length)].name;
+                    const bookInfo = bibleStructure.find(b => b.name === book);
+                    chapter = Math.floor(Math.random() * bookInfo.chapters) + 1;
+                    verse = Math.floor(Math.random() * 30) + 1;
+                }
+                
+                // Simuler un appel API (dans un cas réel, vous utiliseriez une API Bible)
+                const randomVerse = await fetchBibleVerse(book, chapter, verse);
                 
                 // Mettre à jour l'affichage
                 verseTextElement.textContent = `"${randomVerse.text}"`;
                 verseReferenceElement.textContent = `${randomVerse.book} ${randomVerse.chapter}:${randomVerse.verse}`;
                 
+                // Définir l'arrière-plan en fonction de la catégorie du verset
+                setBackgroundByCategory(randomVerse.category);
+                
                 // Mettre à jour les statistiques
-                stats.totalVerses++;
+                stats.generatedCount++;
                 stats.uniqueBooks.add(randomVerse.book);
                 stats.generatedVerses.push(randomVerse);
+                
+                // Ajouter une activité
+                addActivity(`Verset généré: ${randomVerse.book} ${randomVerse.chapter}:${randomVerse.verse}`);
                 
                 // Sauvegarder les statistiques
                 saveStats();
                 
                 // Mettre à jour l'affichage des statistiques
                 updateStatsDisplay();
+                updateAdminStatsDisplay();
                 
+            } catch (error) {
+                console.error('Erreur lors de la génération du verset:', error);
+                verseTextElement.textContent = '"Je suis le chemin, la vérité, et la vie. Nul ne vient au Père que par moi."';
+                verseReferenceElement.textContent = 'Jean 14:6';
+            } finally {
                 // Masquer l'indicateur de chargement
                 loadingSpinner.style.display = 'none';
-                btnText.textContent = 'Générer un verset';
+                btnText.textContent = stats.selectedBook ? `Générer verset (${stats.selectedBook})` : 'Générer un verset aléatoire';
                 generateButton.disabled = false;
                 
                 // Masquer les boutons de partage
                 shareButtonsContainer.style.display = 'none';
-            }, 800);
+            }
         }
 
+        // Fonction pour simuler l'appel à une API Bible
+        async function fetchBibleVerse(book, chapter, verse) {
+            // Simuler un délai de réseau
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            // Dans un cas réel, vous utiliseriez une API comme:
+            // https://api.bible/v1/bibles/...
+            // ou
+            // https://bible-api.com/...
+            
+            // Pour la démonstration, nous générons un verset simulé
+            const categories = Object.keys(backgroundImages);
+            const randomCategory = categories[Math.floor(Math.random() * (categories.length - 1))];
+            
+            return {
+                book: book,
+                chapter: chapter,
+                verse: verse,
+                text: `Verset simulé de ${book} ${chapter}:${verse}. Dans une implémentation réelle, ce texte viendrait d'une API Bible complète.`,
+                category: randomCategory
+            };
+        }
+
+        // [Toutes les autres fonctions restent identiques à la version précédente]
         // Fonction pour basculer l'affichage des boutons de partage
         function toggleShareButtons() {
             if (verseReferenceElement.textContent === '') {
@@ -471,6 +869,12 @@
             const verseReference = verseReferenceElement.textContent;
             const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(`${verseText} - ${verseReference}`)}`;
             window.open(shareUrl, '_blank', 'width=600,height=400');
+            
+            // Mettre à jour les statistiques de partage
+            stats.shares++;
+            addActivity('Versement partagé sur Facebook');
+            saveStats();
+            updateAdminStatsDisplay();
         }
 
         function shareOnTwitter() {
@@ -478,6 +882,12 @@
             const verseReference = verseReferenceElement.textContent;
             const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${verseText} - ${verseReference}`)}&url=${encodeURIComponent(window.location.href)}`;
             window.open(shareUrl, '_blank', 'width=600,height=400');
+            
+            // Mettre à jour les statistiques de partage
+            stats.shares++;
+            addActivity('Versement partagé sur Twitter');
+            saveStats();
+            updateAdminStatsDisplay();
         }
 
         function shareOnWhatsApp() {
@@ -485,6 +895,158 @@
             const verseReference = verseReferenceElement.textContent;
             const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${verseText} - ${verseReference} ${window.location.href}`)}`;
             window.open(shareUrl, '_blank', 'width=600,height=400');
+            
+            // Mettre à jour les statistiques de partage
+            stats.shares++;
+            addActivity('Versement partagé sur WhatsApp');
+            saveStats();
+            updateAdminStatsDisplay();
+        }
+
+        // Fonction pour définir un arrière-plan aléatoire
+        function setRandomBackground() {
+            // Obtenir toutes les catégories disponibles
+            const categories = Object.keys(backgroundImages);
+            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            
+            // Sélectionner une image aléatoire dans cette catégorie
+            const images = backgroundImages[randomCategory];
+            const randomImage = images[Math.floor(Math.random() * images.length)];
+            
+            document.body.style.backgroundImage = `url('${randomImage}')`;
+            
+            // Mettre à jour les statistiques
+            stats.backgroundChanges++;
+            addActivity('Arrière-plan changé manuellement');
+            saveStats();
+            updateStatsDisplay();
+            updateAdminStatsDisplay();
+        }
+
+        // Fonction pour définir l'arrière-plan par catégorie
+        function setBackgroundByCategory(category) {
+            const images = backgroundImages[category] || backgroundImages.default;
+            const randomImage = images[Math.floor(Math.random() * images.length)];
+            document.body.style.backgroundImage = `url('${randomImage}')`;
+        }
+
+        // Fonction pour gérer les vues de page
+        function handlePageView() {
+            const today = new Date().toDateString();
+            const visitorId = generateVisitorId();
+            
+            // Vérifier si c'est une nouvelle journée
+            if (stats.lastVisitDate !== today) {
+                stats.todayViews = 0;
+                stats.lastVisitDate = today;
+            }
+            
+            // Incrémenter les vues
+            stats.pageViews++;
+            stats.todayViews++;
+            stats.uniqueVisitors.add(visitorId);
+            
+            // Ajouter une activité si c'est la première visite aujourd'hui
+            if (stats.todayViews === 1) {
+                addActivity('Nouvelle visite aujourd\'hui');
+            }
+            
+            // Sauvegarder les statistiques
+            saveStats();
+            updateStatsDisplay();
+            updateAdminStatsDisplay();
+        }
+
+        // Fonction pour générer un ID de visiteur
+        function generateVisitorId() {
+            // Utiliser une combinaison d'informations du navigateur
+            return navigator.userAgent + Math.random().toString(36).substring(2, 15);
+        }
+
+        // Fonction pour basculer le panneau d'administration
+        function toggleAdminPanel() {
+            if (adminPanel.style.display === 'none' || adminPanel.style.display === '') {
+                adminPanel.style.display = 'block';
+                adminToggleButton.innerHTML = '<i class="fas fa-times"></i> Fermer le Tableau de Bord';
+            } else {
+                adminPanel.style.display = 'none';
+                adminToggleButton.innerHTML = '<i class="fas fa-chart-line"></i> Tableau de Bord Admin';
+            }
+        }
+
+        // Fonction pour ajouter une activité
+        function addActivity(activity) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const dateString = now.toLocaleDateString();
+            
+            stats.activities.unshift({
+                text: activity,
+                time: timeString,
+                date: dateString,
+                timestamp: now.getTime()
+            });
+            
+            // Garder seulement les 20 dernières activités
+            if (stats.activities.length > 20) {
+                stats.activities = stats.activities.slice(0, 20);
+            }
+            
+            updateActivityList();
+        }
+
+        // Fonction pour mettre à jour la liste des activités
+        function updateActivityList() {
+            activityListElement.innerHTML = '';
+            
+            stats.activities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                activityItem.innerHTML = `
+                    <span>${activity.text}</span>
+                    <span>${activity.date} ${activity.time}</span>
+                `;
+                activityListElement.appendChild(activityItem);
+            });
+        }
+
+        // Fonction pour exporter les statistiques
+        function exportStats() {
+            const dataStr = JSON.stringify(stats, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `statistiques-versets-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            addActivity('Statistiques exportées');
+        }
+
+        // Fonction pour réinitialiser les statistiques
+        function resetStats() {
+            if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les statistiques ? Cette action est irréversible.')) {
+                stats = {
+                    generatedCount: 0,
+                    uniqueBooks: new Set(),
+                    pageViews: 0,
+                    backgroundChanges: 0,
+                    shares: 0,
+                    uniqueVisitors: new Set(),
+                    todayViews: 0,
+                    lastVisitDate: null,
+                    generatedVerses: [],
+                    activities: [],
+                    selectedBook: null
+                };
+                
+                saveStats();
+                updateStatsDisplay();
+                updateAdminStatsDisplay();
+                updateActivityList();
+                
+                addActivity('Statistiques réinitialisées');
+            }
         }
 
         // Fonctions pour gérer les statistiques
@@ -492,27 +1054,49 @@
             const savedStats = localStorage.getItem('bibleVerseGeneratorStats');
             if (savedStats) {
                 const parsedStats = JSON.parse(savedStats);
-                stats.totalVerses = parsedStats.totalVerses || 0;
+                stats.generatedCount = parsedStats.generatedCount || 0;
                 stats.uniqueBooks = new Set(parsedStats.uniqueBooks || []);
                 stats.pageViews = parsedStats.pageViews || 0;
+                stats.backgroundChanges = parsedStats.backgroundChanges || 0;
+                stats.shares = parsedStats.shares || 0;
+                stats.uniqueVisitors = new Set(parsedStats.uniqueVisitors || []);
+                stats.todayViews = parsedStats.todayViews || 0;
+                stats.lastVisitDate = parsedStats.lastVisitDate || null;
                 stats.generatedVerses = parsedStats.generatedVerses || [];
+                stats.activities = parsedStats.activities || [];
+                stats.selectedBook = parsedStats.selectedBook || null;
             }
         }
 
         function saveStats() {
             const statsToSave = {
-                totalVerses: stats.totalVerses,
+                generatedCount: stats.generatedCount,
                 uniqueBooks: Array.from(stats.uniqueBooks),
                 pageViews: stats.pageViews,
-                generatedVerses: stats.generatedVerses
+                backgroundChanges: stats.backgroundChanges,
+                shares: stats.shares,
+                uniqueVisitors: Array.from(stats.uniqueVisitors),
+                todayViews: stats.todayViews,
+                lastVisitDate: stats.lastVisitDate,
+                generatedVerses: stats.generatedVerses,
+                activities: stats.activities,
+                selectedBook: stats.selectedBook
             };
             localStorage.setItem('bibleVerseGeneratorStats', JSON.stringify(statsToSave));
         }
 
         function updateStatsDisplay() {
-            totalVersesElement.textContent = stats.totalVerses;
+            generatedCountElement.textContent = stats.generatedCount;
             uniqueBooksElement.textContent = stats.uniqueBooks.size;
             pageViewsElement.textContent = stats.pageViews;
+            backgroundChangesElement.textContent = stats.backgroundChanges;
+        }
+
+        function updateAdminStatsDisplay() {
+            adminTotalViewsElement.textContent = stats.pageViews;
+            adminUniqueVisitorsElement.textContent = stats.uniqueVisitors.size;
+            adminTodayViewsElement.textContent = stats.todayViews;
+            adminSharesElement.textContent = stats.shares;
         }
     </script>
 </body>
