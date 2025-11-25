@@ -337,13 +337,7 @@
             margin-top: 10px;
         }
         
-        .admin-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: none; /* CACHÉ PAR DÉFAUT */
-        }
+        /* SUPPRIMÉ: Le bouton admin-toggle a été supprimé */
         
         .book-selector {
             display: flex;
@@ -446,11 +440,6 @@
                 font-size: 1.3rem;
             }
             
-            .admin-toggle {
-                position: static;
-                margin-bottom: 20px;
-            }
-            
             .book-selector {
                 max-height: 100px;
                 overflow-y: auto;
@@ -470,12 +459,7 @@
             </div>
         </header>
         
-        <!-- Bouton admin caché par défaut -->
-        <div class="admin-toggle" id="admin-toggle-container">
-            <button class="btn btn-admin" id="admin-toggle-btn">
-                <i class="fas fa-chart-line"></i> Tableau de Bord Admin
-            </button>
-        </div>
+        <!-- SUPPRIMÉ: Le bouton admin-toggle a été supprimé -->
         
         <main>
             <div class="card">
@@ -493,7 +477,7 @@
                     <button class="btn btn-change-bg" id="change-bg-btn">Changer l'arrière-plan</button>
                     
                     <!-- Bouton d'accès admin discret -->
-                    <button class="btn btn-admin" id="admin-access-btn" style="display: none;">
+                    <button class="btn btn-admin" id="admin-access-btn">
                         <i class="fas fa-lock"></i> Accès Admin
                     </button>
                 </div>
@@ -609,8 +593,8 @@
     <script>
         // Configuration administrateur
         const ADMIN_CONFIG = {
-            username: "SIDI OULD",
-            password: "Lagache#21", // À changer en production!
+            username: "admin",
+            password: "bible2023", // À changer en production!
             sessionTimeout: 60 // minutes
         };
 
@@ -739,7 +723,6 @@
         const generateButton = document.getElementById('generate-btn');
         const shareButton = document.getElementById('share-btn');
         const changeBgButton = document.getElementById('change-bg-btn');
-        const adminToggleButton = document.getElementById('admin-toggle-btn');
         const adminPanel = document.getElementById('admin-panel');
         const shareButtonsContainer = document.getElementById('share-buttons');
         const loadingSpinner = document.getElementById('loading-spinner');
@@ -769,7 +752,6 @@
         const loginBtn = document.getElementById('login-btn');
         const cancelLoginBtn = document.getElementById('cancel-login-btn');
         const adminAccessBtn = document.getElementById('admin-access-btn');
-        const adminToggleContainer = document.getElementById('admin-toggle-container');
         const logoutAdminBtn = document.getElementById('logout-admin-btn');
 
         // Variables pour les statistiques
@@ -819,7 +801,6 @@
             generateButton.addEventListener('click', generateRandomVerse);
             shareButton.addEventListener('click', toggleShareButtons);
             changeBgButton.addEventListener('click', setRandomBackground);
-            adminToggleButton.addEventListener('click', toggleAdminPanel);
             exportStatsButton.addEventListener('click', exportStats);
             resetStatsButton.addEventListener('click', resetStats);
             
@@ -829,9 +810,6 @@
 
         // Configuration de la sécurité admin
         function setupAdminSecurity() {
-            // Afficher le bouton d'accès admin discret
-            adminAccessBtn.style.display = 'block';
-            
             // Événements de connexion
             adminAccessBtn.addEventListener('click', showLoginModal);
             loginBtn.addEventListener('click', attemptLogin);
@@ -889,8 +867,8 @@
             isAdmin = true;
             hideLoginModal();
             
-            // Afficher les éléments admin
-            adminToggleContainer.style.display = 'block';
+            // Afficher le panneau admin
+            adminPanel.style.display = 'block';
             adminAccessBtn.style.display = 'none';
             
             // Démarrer le timer de session
@@ -907,19 +885,15 @@
         function logoutAdmin() {
             isAdmin = false;
             
-            // Cacher les éléments admin
-            adminToggleContainer.style.display = 'none';
-            adminAccessBtn.style.display = 'block';
+            // Cacher le panneau admin
             adminPanel.style.display = 'none';
+            adminAccessBtn.style.display = 'block';
             
             // Arrêter le timer de session
             stopAdminSessionTimer();
             
             // Supprimer la session
             clearAdminSession();
-            
-            // Réinitialiser le texte du bouton
-            adminToggleButton.innerHTML = '<i class="fas fa-chart-line"></i> Tableau de Bord Admin';
             
             // Ajouter une activité
             addActivity('Administrateur déconnecté');
@@ -1228,22 +1202,6 @@
         function generateVisitorId() {
             // Utiliser une combinaison d'informations du navigateur
             return navigator.userAgent + Math.random().toString(36).substring(2, 15);
-        }
-
-        // Fonction pour basculer le panneau d'administration
-        function toggleAdminPanel() {
-            if (!isAdmin) {
-                showLoginModal();
-                return;
-            }
-            
-            if (adminPanel.style.display === 'none' || adminPanel.style.display === '') {
-                adminPanel.style.display = 'block';
-                adminToggleButton.innerHTML = '<i class="fas fa-times"></i> Fermer le Tableau de Bord';
-            } else {
-                adminPanel.style.display = 'none';
-                adminToggleButton.innerHTML = '<i class="fas fa-chart-line"></i> Tableau de Bord Admin';
-            }
         }
 
         // Fonction pour ajouter une activité
