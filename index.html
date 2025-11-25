@@ -342,6 +342,7 @@
             top: 20px;
             right: 20px;
             z-index: 1000;
+            display: none; /* CACHÉ PAR DÉFAUT */
         }
         
         .book-selector {
@@ -369,6 +370,60 @@
         
         .book-btn.active {
             background: var(--secondary-color);
+        }
+
+        /* Styles pour le système de connexion admin */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .login-form h3 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .login-error {
+            color: var(--accent-color);
+            text-align: center;
+            margin: 10px 0;
+            display: none;
         }
         
         @media (max-width: 768px) {
@@ -415,7 +470,8 @@
             </div>
         </header>
         
-        <div class="admin-toggle">
+        <!-- Bouton admin caché par défaut -->
+        <div class="admin-toggle" id="admin-toggle-container">
             <button class="btn btn-admin" id="admin-toggle-btn">
                 <i class="fas fa-chart-line"></i> Tableau de Bord Admin
             </button>
@@ -435,6 +491,11 @@
                     </button>
                     <button class="btn btn-share" id="share-btn">Partager</button>
                     <button class="btn btn-change-bg" id="change-bg-btn">Changer l'arrière-plan</button>
+                    
+                    <!-- Bouton d'accès admin discret -->
+                    <button class="btn btn-admin" id="admin-access-btn" style="display: none;">
+                        <i class="fas fa-lock"></i> Accès Admin
+                    </button>
                 </div>
                 
                 <div class="share-buttons" id="share-buttons" style="display: none;">
@@ -469,6 +530,7 @@
                 </div>
             </div>
             
+            <!-- Panneau admin caché par défaut -->
             <div class="admin-panel" id="admin-panel">
                 <h2><i class="fas fa-chart-line"></i> Tableau de Bord Administrateur</h2>
                 
@@ -505,6 +567,9 @@
                     <button class="btn btn-admin" id="reset-stats-btn">
                         <i class="fas fa-trash"></i> Réinitialiser les statistiques
                     </button>
+                    <button class="btn btn-share" id="logout-admin-btn">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion Admin
+                    </button>
                 </div>
             </div>
         </main>
@@ -515,7 +580,40 @@
         </footer>
     </div>
 
+    <!-- Modal de connexion admin -->
+    <div class="login-modal" id="login-modal">
+        <div class="login-form">
+            <h3><i class="fas fa-lock"></i> Connexion Administrateur</h3>
+            <div class="form-group">
+                <label for="admin-username">Nom d'utilisateur:</label>
+                <input type="text" id="admin-username" placeholder="Entrez le nom d'admin">
+            </div>
+            <div class="form-group">
+                <label for="admin-password">Mot de passe:</label>
+                <input type="password" id="admin-password" placeholder="Entrez le mot de passe">
+            </div>
+            <div class="login-error" id="login-error">
+                Identifiants incorrects!
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </button>
+                <button class="btn btn-share" id="cancel-login-btn">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Configuration administrateur
+        const ADMIN_CONFIG = {
+            username: "SIDI OULD",
+            password: "Lagache#21", // À changer en production!
+            sessionTimeout: 60 // minutes
+        };
+
         // Structure complète de la Bible avec tous les livres et nombres de chapitres
         const bibleStructure = [
             // Ancien Testament
@@ -663,6 +761,17 @@
         const exportStatsButton = document.getElementById('export-stats-btn');
         const resetStatsButton = document.getElementById('reset-stats-btn');
 
+        // Éléments pour la sécurité admin
+        const loginModal = document.getElementById('login-modal');
+        const adminUsernameInput = document.getElementById('admin-username');
+        const adminPasswordInput = document.getElementById('admin-password');
+        const loginError = document.getElementById('login-error');
+        const loginBtn = document.getElementById('login-btn');
+        const cancelLoginBtn = document.getElementById('cancel-login-btn');
+        const adminAccessBtn = document.getElementById('admin-access-btn');
+        const adminToggleContainer = document.getElementById('admin-toggle-container');
+        const logoutAdminBtn = document.getElementById('logout-admin-btn');
+
         // Variables pour les statistiques
         let stats = {
             generatedCount: 0,
@@ -678,8 +787,15 @@
             selectedBook: null
         };
 
+        // Variables pour la sécurité
+        let isAdmin = false;
+        let adminSessionTimer = null;
+
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier si une session admin est active
+            checkAdminSession();
+            
             // Charger les statistiques depuis le localStorage
             loadStats();
             
@@ -696,6 +812,9 @@
             // Définir un arrière-plan initial
             setRandomBackground();
             
+            // Configurer la sécurité admin
+            setupAdminSecurity();
+            
             // Ajouter les écouteurs d'événements
             generateButton.addEventListener('click', generateRandomVerse);
             shareButton.addEventListener('click', toggleShareButtons);
@@ -708,6 +827,155 @@
             setupShareButtons();
         });
 
+        // Configuration de la sécurité admin
+        function setupAdminSecurity() {
+            // Afficher le bouton d'accès admin discret
+            adminAccessBtn.style.display = 'block';
+            
+            // Événements de connexion
+            adminAccessBtn.addEventListener('click', showLoginModal);
+            loginBtn.addEventListener('click', attemptLogin);
+            cancelLoginBtn.addEventListener('click', hideLoginModal);
+            logoutAdminBtn.addEventListener('click', logoutAdmin);
+            
+            // Fermer la modal en cliquant à l'extérieur
+            loginModal.addEventListener('click', function(e) {
+                if (e.target === loginModal) {
+                    hideLoginModal();
+                }
+            });
+            
+            // Connexion avec la touche Entrée
+            adminPasswordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    attemptLogin();
+                }
+            });
+        }
+
+        // Afficher la modal de connexion
+        function showLoginModal() {
+            loginModal.style.display = 'flex';
+            adminUsernameInput.focus();
+            loginError.style.display = 'none';
+        }
+
+        // Cacher la modal de connexion
+        function hideLoginModal() {
+            loginModal.style.display = 'none';
+            adminUsernameInput.value = '';
+            adminPasswordInput.value = '';
+            loginError.style.display = 'none';
+        }
+
+        // Tenter la connexion admin
+        function attemptLogin() {
+            const username = adminUsernameInput.value;
+            const password = adminPasswordInput.value;
+            
+            if (username === ADMIN_CONFIG.username && password === ADMIN_CONFIG.password) {
+                // Connexion réussie
+                loginSuccess();
+            } else {
+                // Échec de connexion
+                loginError.style.display = 'block';
+                adminPasswordInput.value = '';
+                adminPasswordInput.focus();
+            }
+        }
+
+        // Connexion admin réussie
+        function loginSuccess() {
+            isAdmin = true;
+            hideLoginModal();
+            
+            // Afficher les éléments admin
+            adminToggleContainer.style.display = 'block';
+            adminAccessBtn.style.display = 'none';
+            
+            // Démarrer le timer de session
+            startAdminSessionTimer();
+            
+            // Sauvegarder la session
+            saveAdminSession();
+            
+            // Ajouter une activité
+            addActivity('Administrateur connecté');
+        }
+
+        // Déconnexion admin
+        function logoutAdmin() {
+            isAdmin = false;
+            
+            // Cacher les éléments admin
+            adminToggleContainer.style.display = 'none';
+            adminAccessBtn.style.display = 'block';
+            adminPanel.style.display = 'none';
+            
+            // Arrêter le timer de session
+            stopAdminSessionTimer();
+            
+            // Supprimer la session
+            clearAdminSession();
+            
+            // Réinitialiser le texte du bouton
+            adminToggleButton.innerHTML = '<i class="fas fa-chart-line"></i> Tableau de Bord Admin';
+            
+            // Ajouter une activité
+            addActivity('Administrateur déconnecté');
+        }
+
+        // Démarrer le timer de session admin
+        function startAdminSessionTimer() {
+            stopAdminSessionTimer(); // Arrêter tout timer existant
+            
+            adminSessionTimer = setTimeout(() => {
+                alert('Session admin expirée. Veuillez vous reconnecter.');
+                logoutAdmin();
+            }, ADMIN_CONFIG.sessionTimeout * 60 * 1000);
+        }
+
+        // Arrêter le timer de session admin
+        function stopAdminSessionTimer() {
+            if (adminSessionTimer) {
+                clearTimeout(adminSessionTimer);
+                adminSessionTimer = null;
+            }
+        }
+
+        // Sauvegarder la session admin
+        function saveAdminSession() {
+            const sessionData = {
+                timestamp: Date.now(),
+                timeout: ADMIN_CONFIG.sessionTimeout
+            };
+            localStorage.setItem('adminSession', JSON.stringify(sessionData));
+        }
+
+        // Vérifier la session admin existante
+        function checkAdminSession() {
+            const sessionData = localStorage.getItem('adminSession');
+            
+            if (sessionData) {
+                const session = JSON.parse(sessionData);
+                const sessionAge = (Date.now() - session.timestamp) / (1000 * 60); // en minutes
+                
+                if (sessionAge < ADMIN_CONFIG.sessionTimeout) {
+                    // Session encore valide
+                    loginSuccess();
+                } else {
+                    // Session expirée
+                    clearAdminSession();
+                }
+            }
+        }
+
+        // Supprimer la session admin
+        function clearAdminSession() {
+            localStorage.removeItem('adminSession');
+        }
+
+        // [Toutes les autres fonctions restent identiques]
         // Initialiser le sélecteur de livres
         function initializeBookSelector() {
             bibleStructure.forEach(book => {
@@ -826,7 +1094,6 @@
             };
         }
 
-        // [Toutes les autres fonctions restent identiques à la version précédente]
         // Fonction pour basculer l'affichage des boutons de partage
         function toggleShareButtons() {
             if (verseReferenceElement.textContent === '') {
@@ -965,6 +1232,11 @@
 
         // Fonction pour basculer le panneau d'administration
         function toggleAdminPanel() {
+            if (!isAdmin) {
+                showLoginModal();
+                return;
+            }
+            
             if (adminPanel.style.display === 'none' || adminPanel.style.display === '') {
                 adminPanel.style.display = 'block';
                 adminToggleButton.innerHTML = '<i class="fas fa-times"></i> Fermer le Tableau de Bord';
