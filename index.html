@@ -24,7 +24,7 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             width: 100%;
             background-color: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
@@ -48,22 +48,62 @@
             line-height: 1.5;
         }
         
-        .verse-container {
-            background-color: #f8f9fa;
-            border-left: 5px solid #3498db;
-            padding: 25px;
-            margin: 25px 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            min-height: 180px;
+        .sections-container {
             display: flex;
-            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        
+        .verse-image-container {
+            position: relative;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+        }
+        
+        .verse-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .verse-content {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
         }
         
         .verse-text {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             line-height: 1.6;
             color: #2c3e50;
             font-style: italic;
@@ -71,7 +111,7 @@
         }
         
         .verse-reference {
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             color: #7f8c8d;
             font-weight: bold;
             margin-top: 10px;
@@ -104,6 +144,11 @@
             color: white;
         }
         
+        #generate-image-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
         #share-btn {
             background-color: #2ecc71;
             color: white;
@@ -111,6 +156,44 @@
         
         #copy-btn {
             background-color: #9b59b6;
+            color: white;
+        }
+        
+        .share-options {
+            display: none;
+            margin-top: 15px;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .share-options.show {
+            display: flex;
+        }
+        
+        .share-btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+        }
+        
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+        }
+        
+        .facebook-btn {
+            background-color: #3b5998;
+            color: white;
+        }
+        
+        .twitter-btn {
+            background-color: #1DA1F2;
+            color: white;
+        }
+        
+        .download-btn {
+            background-color: #f39c12;
             color: white;
         }
         
@@ -127,12 +210,32 @@
             background-color: #2980b9;
         }
         
+        #generate-image-btn:hover {
+            background-color: #c0392b;
+        }
+        
         #share-btn:hover {
             background-color: #27ae60;
         }
         
         #copy-btn:hover {
             background-color: #8e44ad;
+        }
+        
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+        }
+        
+        .facebook-btn:hover {
+            background-color: #2d4373;
+        }
+        
+        .twitter-btn:hover {
+            background-color: #0d8bd9;
+        }
+        
+        .download-btn:hover {
+            background-color: #e67e22;
         }
         
         .notification {
@@ -183,7 +286,11 @@
             font-size: 0.9rem;
         }
         
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            .sections-container {
+                flex-direction: column;
+            }
+            
             .container {
                 padding: 20px;
             }
@@ -193,7 +300,12 @@
             }
             
             .verse-text {
-                font-size: 1.2rem;
+                font-size: 1.3rem;
+            }
+            
+            .verse-content {
+                padding: 20px;
+                margin: 15px;
             }
             
             .buttons {
@@ -214,25 +326,81 @@
         
         <p class="description">Découvrez un verset aléatoire parmi les 31,102 versets de la Bible Louis Segond. Une source d'inspiration quotidienne.</p>
         
-        <div class="verse-container">
-            <p class="verse-text" id="verse-text">Cliquez sur le bouton "Générer un verset" pour afficher un verset biblique aléatoire.</p>
-            <p class="verse-reference" id="verse-reference"></p>
+        <div class="sections-container">
+            <div class="section">
+                <h2 class="section-title">Verset du Jour</h2>
+                <div class="verse-image-container" id="daily-verse-container">
+                    <img id="daily-verse-image" class="verse-image" alt="Verset du jour">
+                    <div class="verse-content">
+                        <p class="verse-text" id="daily-verse-text">Chargement du verset du jour...</p>
+                        <p class="verse-reference" id="daily-verse-reference"></p>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button id="generate-daily-image-btn">
+                        <i class="fas fa-sync-alt"></i> Nouvelle image
+                    </button>
+                    <button id="share-daily-btn">
+                        <i class="fas fa-share-alt"></i> Partager
+                    </button>
+                    <button id="copy-daily-btn">
+                        <i class="fas fa-copy"></i> Copier
+                    </button>
+                </div>
+                <div class="share-options" id="daily-share-options">
+                    <button class="share-btn whatsapp-btn" id="daily-whatsapp-share">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button class="share-btn facebook-btn" id="daily-facebook-share">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </button>
+                    <button class="share-btn twitter-btn" id="daily-twitter-share">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </button>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">Verset Aléatoire</h2>
+                <div class="verse-image-container" id="random-verse-container">
+                    <img id="random-verse-image" class="verse-image" alt="Verset aléatoire">
+                    <div class="verse-content">
+                        <p class="verse-text" id="random-verse-text">Cliquez pour générer un verset</p>
+                        <p class="verse-reference" id="random-verse-reference"></p>
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button id="generate-btn">
+                        <i class="fas fa-random"></i> Nouveau verset
+                    </button>
+                    <button id="generate-image-btn">
+                        <i class="fas fa-sync-alt"></i> Nouvelle image
+                    </button>
+                    <button id="share-btn">
+                        <i class="fas fa-share-alt"></i> Partager
+                    </button>
+                    <button id="copy-btn">
+                        <i class="fas fa-copy"></i> Copier
+                    </button>
+                </div>
+                
+                <div class="share-options" id="share-options">
+                    <button class="share-btn whatsapp-btn" id="whatsapp-share">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button class="share-btn facebook-btn" id="facebook-share">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </button>
+                    <button class="share-btn twitter-btn" id="twitter-share">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </button>
+                </div>
+            </div>
         </div>
         
         <div class="loading" id="loading">
-            <i class="fas fa-spinner"></i> Chargement du verset...
-        </div>
-        
-        <div class="buttons">
-            <button id="generate-btn">
-                <i class="fas fa-random"></i> Générer un verset
-            </button>
-            <button id="share-btn">
-                <i class="fas fa-share-alt"></i> Partager
-            </button>
-            <button id="copy-btn">
-                <i class="fas fa-copy"></i> Copier
-            </button>
+            <i class="fas fa-spinner"></i> Chargement de l'image...
         </div>
         
         <div class="stats" id="stats">
@@ -248,14 +416,44 @@
 
     <script>
         // Éléments DOM
-        const verseTextElement = document.getElementById('verse-text');
-        const verseReferenceElement = document.getElementById('verse-reference');
+        const dailyVerseText = document.getElementById('daily-verse-text');
+        const dailyVerseReference = document.getElementById('daily-verse-reference');
+        const dailyVerseImage = document.getElementById('daily-verse-image');
+        const randomVerseText = document.getElementById('random-verse-text');
+        const randomVerseReference = document.getElementById('random-verse-reference');
+        const randomVerseImage = document.getElementById('random-verse-image');
         const generateBtn = document.getElementById('generate-btn');
+        const generateImageBtn = document.getElementById('generate-image-btn');
+        const generateDailyImageBtn = document.getElementById('generate-daily-image-btn');
         const shareBtn = document.getElementById('share-btn');
+        const shareDailyBtn = document.getElementById('share-daily-btn');
         const copyBtn = document.getElementById('copy-btn');
+        const copyDailyBtn = document.getElementById('copy-daily-btn');
+        const shareOptions = document.getElementById('share-options');
+        const dailyShareOptions = document.getElementById('daily-share-options');
+        const whatsappShare = document.getElementById('whatsapp-share');
+        const facebookShare = document.getElementById('facebook-share');
+        const twitterShare = document.getElementById('twitter-share');
+        const dailyWhatsappShare = document.getElementById('daily-whatsapp-share');
+        const dailyFacebookShare = document.getElementById('daily-facebook-share');
+        const dailyTwitterShare = document.getElementById('daily-twitter-share');
         const notification = document.getElementById('notification');
         const loadingElement = document.getElementById('loading');
         const statsElement = document.getElementById('stats');
+
+        // Images de fond bibliques
+        const backgroundImages = [
+            'https://images.unsplash.com/photo-1544830287-5a58595bc8e5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1580584126903-c27d1de3c11b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1504051771394-dd2e66b2e08f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1531299204818-ea1ed9dc9467?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1518834107812-67d4d9160049?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1518655048521-f130df911f08?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1509023464722-18d996393ca8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1476820865390-c52aeebb9891?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80'
+        ];
 
         // Base de données complète des versets bibliques
         const bibleDatabase = {
@@ -274,6 +472,9 @@
                 },
                 119: {
                     105: "Ta parole est une lampe à mes pieds, Et une lumière sur mon sentier."
+                },
+                46: {
+                    1: "Dieu est pour nous un refuge et un appui, Un secours qui ne manque jamais dans la détresse."
                 }
             },
             "Jean": {
@@ -282,11 +483,15 @@
                 },
                 14: {
                     6: "Jésus lui dit: Je suis le chemin, la vérité, et la vie. Nul ne vient au Père que par moi."
+                },
+                8: {
+                    32: "Vous connaîtrez la vérité, et la vérité vous affranchira."
                 }
             },
             "Philippiens": {
                 4: {
-                    13: "Je puis tout par celui qui me fortifie."
+                    13: "Je puis tout par celui qui me fortifie.",
+                    6: "Ne vous inquiétez de rien; mais en toute chose faites connaître vos besoins à Dieu par des prières et des supplications, avec des actions de grâces."
                 }
             },
             "Matthieu": {
@@ -295,6 +500,9 @@
                 },
                 5: {
                     16: "Que votre lumière luise ainsi devant les hommes, afin qu'ils voient vos bonnes œuvres, et qu'ils glorifient votre Père qui est dans les cieux."
+                },
+                6: {
+                    33: "Cherchez premièrement le royaume et la justice de Dieu; et toutes ces choses vous seront données par-dessus."
                 }
             },
             "1 Thessaloniciens": {
@@ -312,6 +520,9 @@
             "Ésaïe": {
                 41: {
                     10: "Ne crains point, car je suis avec toi; Ne promène pas des regards inquiets, car je suis ton Dieu; Je te fortifie, je viens à ton secours, Je te soutiens de ma droite triomphante."
+                },
+                40: {
+                    31: "Mais ceux qui se confient en l'Éternel renouvellent leur force. Ils prennent le vol comme les aigles; Ils courent, et ne se lassent point, Ils marchent, et ne se fatiguent point."
                 }
             },
             "Proverbes": {
@@ -326,6 +537,9 @@
                 },
                 12: {
                     2: "Ne vous conformez pas au siècle présent, mais soyez transformés par le renouvellement de l'intelligence."
+                },
+                15: {
+                    13: "Que le Dieu de l'espérance vous remplisse de toute joie et de toute paix dans la foi, pour que vous abondiez en espérance, par la puissance du Saint-Esprit!"
                 }
             },
             "Galates": {
@@ -344,6 +558,9 @@
             "1 Corinthiens": {
                 13: {
                     4: "L'amour est patient, il est plein de bonté; l'amour n'est point envieux; l'amour ne se vante point, il ne s'enfle point d'orgueil."
+                },
+                16: {
+                    14: "Que tout ce que vous faites se fasse avec charité."
                 }
             },
             "2 Corinthiens": {
@@ -384,76 +601,118 @@
         };
 
         // Livres de la Bible avec leur nombre de chapitres
-        const bibleBooks = [
-            { name: "Genèse", chapters: 50 },
-            { name: "Psaumes", chapters: 150 },
-            { name: "Jean", chapters: 21 },
-            { name: "Philippiens", chapters: 4 },
-            { name: "Matthieu", chapters: 28 },
-            { name: "1 Thessaloniciens", chapters: 5 },
-            { name: "Jérémie", chapters: 52 },
-            { name: "Ésaïe", chapters: 66 },
-            { name: "Proverbes", chapters: 31 },
-            { name: "Romains", chapters: 16 },
-            { name: "Galates", chapters: 6 },
-            { name: "Éphésiens", chapters: 6 },
-            { name: "1 Corinthiens", chapters: 16 },
-            { name: "2 Corinthiens", chapters: 13 },
-            { name: "Colossiens", chapters: 4 },
-            { name: "Hébreux", chapters: 13 },
-            { name: "Jacques", chapters: 5 },
-            { name: "1 Pierre", chapters: 5 },
-            { name: "1 Jean", chapters: 5 },
-            { name: "Apocalypse", chapters: 22 }
-        ];
+        const bibleBooks = Object.keys(bibleDatabase);
+
+        // Variables pour stocker les versets actuels
+        let currentDailyVerse = null;
+        let currentRandomVerse = null;
+        let currentDailyImage = null;
+        let currentRandomImage = null;
+
+        // Fonction pour obtenir une image de fond aléatoire
+        function getRandomBackground() {
+            const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+            return backgroundImages[randomIndex];
+        }
+
+        // Fonction pour obtenir un verset aléatoire
+        function getRandomVerse() {
+            // Sélectionner un livre aléatoire
+            const randomBookIndex = Math.floor(Math.random() * bibleBooks.length);
+            const randomBook = bibleBooks[randomBookIndex];
+            
+            // Obtenir les chapitres disponibles pour ce livre
+            const availableChapters = Object.keys(bibleDatabase[randomBook]);
+            
+            // Sélectionner un chapitre aléatoire parmi ceux disponibles
+            const randomChapterIndex = Math.floor(Math.random() * availableChapters.length);
+            const randomChapter = parseInt(availableChapters[randomChapterIndex]);
+            
+            // Obtenir les versets disponibles pour ce chapitre
+            const availableVerses = Object.keys(bibleDatabase[randomBook][randomChapter]);
+            
+            // Sélectionner un verset aléatoire parmi ceux disponibles
+            const randomVerseIndex = Math.floor(Math.random() * availableVerses.length);
+            const randomVerse = parseInt(availableVerses[randomVerseIndex]);
+            
+            // Obtenir le texte du verset
+            const verseText = bibleDatabase[randomBook][randomChapter][randomVerse];
+            
+            return {
+                text: verseText,
+                reference: `${randomBook} ${randomChapter}:${randomVerse}`,
+                book: randomBook,
+                chapter: randomChapter,
+                verse: randomVerse
+            };
+        }
+
+        // Générer le verset du jour (basé sur la date)
+        function generateDailyVerse() {
+            // Utiliser la date pour avoir un verset cohérent toute la journée
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+            
+            // Utiliser le jour de l'année comme seed pour la génération
+            const seed = dayOfYear % 100; // Pour rester dans une plage raisonnable
+            
+            // Sélectionner un livre basé sur le seed
+            const bookIndex = seed % bibleBooks.length;
+            const book = bibleBooks[bookIndex];
+            
+            // Obtenir les chapitres disponibles
+            const chapters = Object.keys(bibleDatabase[book]);
+            const chapterIndex = seed % chapters.length;
+            const chapter = parseInt(chapters[chapterIndex]);
+            
+            // Obtenir les versets disponibles
+            const verses = Object.keys(bibleDatabase[book][chapter]);
+            const verseIndex = seed % verses.length;
+            const verse = parseInt(verses[verseIndex]);
+            
+            // Obtenir le texte
+            const verseText = bibleDatabase[book][chapter][verse];
+            
+            currentDailyVerse = {
+                text: verseText,
+                reference: `${book} ${chapter}:${verse}`,
+                book: book,
+                chapter: chapter,
+                verse: verse
+            };
+            
+            // Afficher le verset
+            dailyVerseText.textContent = `"${verseText}"`;
+            dailyVerseReference.textContent = currentDailyVerse.reference;
+            
+            // Charger une image de fond
+            loadBackgroundImage('daily');
+        }
 
         // Générer un verset aléatoire
         function generateRandomVerse() {
             // Afficher l'indicateur de chargement
             loadingElement.style.display = 'block';
-            verseTextElement.textContent = "Recherche d'un verset...";
-            verseReferenceElement.textContent = "";
             
             // Simuler un délai de chargement
             setTimeout(() => {
                 try {
-                    // Sélectionner un livre aléatoire
-                    const randomBookIndex = Math.floor(Math.random() * bibleBooks.length);
-                    const randomBook = bibleBooks[randomBookIndex];
-                    
-                    // Vérifier si le livre existe dans la base de données
-                    if (!bibleDatabase[randomBook.name]) {
-                        throw new Error('Livre non trouvé');
-                    }
-                    
-                    // Obtenir les chapitres disponibles pour ce livre
-                    const availableChapters = Object.keys(bibleDatabase[randomBook.name]);
-                    
-                    // Sélectionner un chapitre aléatoire parmi ceux disponibles
-                    const randomChapterIndex = Math.floor(Math.random() * availableChapters.length);
-                    const randomChapter = parseInt(availableChapters[randomChapterIndex]);
-                    
-                    // Obtenir les versets disponibles pour ce chapitre
-                    const availableVerses = Object.keys(bibleDatabase[randomBook.name][randomChapter]);
-                    
-                    // Sélectionner un verset aléatoire parmi ceux disponibles
-                    const randomVerseIndex = Math.floor(Math.random() * availableVerses.length);
-                    const randomVerse = parseInt(availableVerses[randomVerseIndex]);
-                    
-                    // Obtenir le texte du verset
-                    const verseText = bibleDatabase[randomBook.name][randomChapter][randomVerse];
+                    currentRandomVerse = getRandomVerse();
                     
                     // Afficher le verset
-                    verseTextElement.textContent = `"${verseText}"`;
-                    verseReferenceElement.textContent = `${randomBook.name} ${randomChapter}:${randomVerse}`;
+                    randomVerseText.textContent = `"${currentRandomVerse.text}"`;
+                    randomVerseReference.textContent = currentRandomVerse.reference;
                     
-                    // Mettre à jour les statistiques
-                    statsElement.textContent = `Verset ${randomVerse} dans ${randomBook.name} ${randomChapter}`;
+                    // Charger une image de fond
+                    loadBackgroundImage('random');
+                    
+                    // Masquer les options de partage
+                    shareOptions.classList.remove('show');
                     
                 } catch (error) {
                     console.error("Erreur lors de la génération du verset:", error);
-                    verseTextElement.textContent = "Désolé, une erreur s'est produite lors du chargement du verset. Veuillez réessayer.";
-                    verseReferenceElement.textContent = "";
+                    randomVerseText.textContent = "Désolé, une erreur s'est produite lors du chargement du verset. Veuillez réessayer.";
+                    randomVerseReference.textContent = "";
                 } finally {
                     // Masquer l'indicateur de chargement
                     loadingElement.style.display = 'none';
@@ -461,15 +720,45 @@
             }, 800);
         }
 
-        // Copier le verset dans le presse-papier
-        function copyVerse() {
-            const verseToCopy = `${verseTextElement.textContent} - ${verseReferenceElement.textContent}`;
+        // Charger une image de fond
+        function loadBackgroundImage(type) {
+            loadingElement.style.display = 'block';
             
-            // Vérifier si le texte est un verset valide
-            if (verseTextElement.textContent.includes('Cliquez') || verseTextElement.textContent.includes('erreur')) {
+            const imageElement = type === 'daily' ? dailyVerseImage : randomVerseImage;
+            const img = new Image();
+            
+            img.onload = function() {
+                imageElement.src = this.src;
+                if (type === 'daily') {
+                    currentDailyImage = this.src;
+                } else {
+                    currentRandomImage = this.src;
+                }
+                loadingElement.style.display = 'none';
+            };
+            
+            img.onerror = function() {
+                // En cas d'erreur, utiliser une image de secours
+                imageElement.src = 'https://images.unsplash.com/photo-1518834107812-67d4d9160049?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80';
+                if (type === 'daily') {
+                    currentDailyImage = imageElement.src;
+                } else {
+                    currentRandomImage = imageElement.src;
+                }
+                loadingElement.style.display = 'none';
+            };
+            
+            img.src = getRandomBackground();
+        }
+
+        // Copier le verset dans le presse-papier
+        function copyVerse(verse) {
+            if (!verse) {
                 showNotification('Veuillez d\'abord générer un verset valide');
                 return;
             }
+            
+            const verseToCopy = `"${verse.text}" - ${verse.reference}`;
             
             navigator.clipboard.writeText(verseToCopy)
                 .then(() => {
@@ -481,29 +770,40 @@
                 });
         }
 
-        // Partager le verset
-        function shareVerse() {
-            const verseToShare = `${verseTextElement.textContent} - ${verseReferenceElement.textContent}`;
-            
-            // Vérifier si le texte est un verset valide
-            if (verseTextElement.textContent.includes('Cliquez') || verseTextElement.textContent.includes('erreur')) {
+        // Partager sur WhatsApp
+        function shareOnWhatsApp(verse, type) {
+            if (!verse) {
                 showNotification('Veuillez d\'abord générer un verset valide');
                 return;
             }
             
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Verset Biblique',
-                    text: verseToShare,
-                    url: window.location.href
-                })
-                .then(() => console.log('Partage réussi'))
-                .catch((error) => console.log('Erreur de partage', error));
-            } else {
-                // Fallback pour les navigateurs qui ne supportent pas l'API de partage
-                copyVerse();
-                showNotification('Verset copié - Partagez-le où vous voulez!');
+            const text = `"${verse.text}" - ${verse.reference}`;
+            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        // Partager sur Facebook
+        function shareOnFacebook(verse, type) {
+            if (!verse) {
+                showNotification('Veuillez d\'abord générer un verset valide');
+                return;
             }
+            
+            const text = `"${verse.text}" - ${verse.reference}`;
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        // Partager sur Twitter
+        function shareOnTwitter(verse, type) {
+            if (!verse) {
+                showNotification('Veuillez d\'abord générer un verset valide');
+                return;
+            }
+            
+            const text = `"${verse.text}" - ${verse.reference}`;
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
         }
 
         // Afficher une notification
@@ -518,10 +818,38 @@
 
         // Événements
         generateBtn.addEventListener('click', generateRandomVerse);
-        copyBtn.addEventListener('click', copyVerse);
-        shareBtn.addEventListener('click', shareVerse);
+        generateImageBtn.addEventListener('click', () => loadBackgroundImage('random'));
+        generateDailyImageBtn.addEventListener('click', () => loadBackgroundImage('daily'));
+        
+        shareBtn.addEventListener('click', () => {
+            if (!currentRandomVerse) {
+                showNotification('Veuillez d\'abord générer un verset valide');
+                return;
+            }
+            shareOptions.classList.toggle('show');
+        });
+        
+        shareDailyBtn.addEventListener('click', () => {
+            if (!currentDailyVerse) {
+                showNotification('Aucun verset du jour disponible');
+                return;
+            }
+            dailyShareOptions.classList.toggle('show');
+        });
+        
+        copyBtn.addEventListener('click', () => copyVerse(currentRandomVerse));
+        copyDailyBtn.addEventListener('click', () => copyVerse(currentDailyVerse));
+        
+        whatsappShare.addEventListener('click', () => shareOnWhatsApp(currentRandomVerse, 'random'));
+        facebookShare.addEventListener('click', () => shareOnFacebook(currentRandomVerse, 'random'));
+        twitterShare.addEventListener('click', () => shareOnTwitter(currentRandomVerse, 'random'));
+        
+        dailyWhatsappShare.addEventListener('click', () => shareOnWhatsApp(currentDailyVerse, 'daily'));
+        dailyFacebookShare.addEventListener('click', () => shareOnFacebook(currentDailyVerse, 'daily'));
+        dailyTwitterShare.addEventListener('click', () => shareOnTwitter(currentDailyVerse, 'daily'));
 
-        // Générer un verset au chargement de la page
+        // Initialisation
+        generateDailyVerse();
         generateRandomVerse();
     </script>
 </body>
