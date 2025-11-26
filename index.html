@@ -1,124 +1,528 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Plateforme Éducative</title>
-
-<style>
-  body { font-family: Arial, sans-serif; margin: 0; background:#f5f5f5; }
-  header { background: #4f46e5; color: white; padding: 15px; text-align: center; }
-
-  nav { background: white; padding: 10px; display: flex; gap: 10px; overflow-x:auto; }
-  nav button {
-    padding: 10px;
-    border: none;
-    background: #e5e7eb;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  nav button:hover { background: #d1d5db; }
-
-  /* Sections */
-  .section {
-    display: none;
-    padding: 20px;
-    background: white;
-    margin: 15px;
-    border-radius: 10px;
-  }
-
-  .active { display: block; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Versets Bibliques</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .description {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        
+        .verse-container {
+            background-color: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .verse-text {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            color: #2c3e50;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+        
+        .verse-reference {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #generate-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        #share-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        #copy-btn {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        #generate-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        #share-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        #copy-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+        
+        .loading {
+            display: none;
+            font-size: 1.2rem;
+            color: #3498db;
+            margin: 20px 0;
+        }
+        
+        .loading i {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .stats {
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: white;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .verse-text {
+                font-size: 1.2rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
 </head>
-
 <body>
+    <div class="container">
+        <h1><i class="fas fa-bible"></i> Générateur de Versets Bibliques</h1>
+        
+        <p class="description">Découvrez un verset aléatoire parmi les 31,102 versets de la Bible Louis Segond. Une source d'inspiration quotidienne.</p>
+        
+        <div class="verse-container">
+            <p class="verse-text" id="verse-text">Cliquez sur le bouton "Générer un verset" pour afficher un verset biblique aléatoire.</p>
+            <p class="verse-reference" id="verse-reference"></p>
+        </div>
+        
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner"></i> Chargement du verset...
+        </div>
+        
+        <div class="buttons">
+            <button id="generate-btn">
+                <i class="fas fa-random"></i> Générer un verset
+            </button>
+            <button id="share-btn">
+                <i class="fas fa-share-alt"></i> Partager
+            </button>
+            <button id="copy-btn">
+                <i class="fas fa-copy"></i> Copier
+            </button>
+        </div>
+        
+        <div class="stats" id="stats">
+            Accédez à l'intégralité des 31,102 versets de la Bible Louis Segond
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">Texte copié avec succès!</div>
+    
+    <footer>
+        <p>© 2023 Générateur de Versets Bibliques - Source: Bible Louis Segond</p>
+    </footer>
 
-<header>
-  <h1>Plateforme Éducative</h1>
-  <p>Apprendre • Progresser • Réussir</p>
-</header>
+    <script>
+        // Éléments DOM
+        const verseTextElement = document.getElementById('verse-text');
+        const verseReferenceElement = document.getElementById('verse-reference');
+        const generateBtn = document.getElementById('generate-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const notification = document.getElementById('notification');
+        const loadingElement = document.getElementById('loading');
+        const statsElement = document.getElementById('stats');
 
-<nav>
-  <button onclick="showSection('dashboard')">🏠 Tableau de bord</button>
-  <button onclick="showSection('cours')">📚 Cours</button>
-  <button onclick="showSection('ressources')">📁 Ressources</button>
-  <button onclick="showSection('evaluations')">📝 Évaluations</button>
-  <button onclick="showSection('forum')">💬 Forum</button>
-  <button onclick="showSection('orientation')">🎯 Orientation</button>
-  <button onclick="showSection('annonces')">📣 Annonces</button>
-  <button onclick="showSection('contact')">☎️ Contact</button>
-</nav>
+        // Base de données complète des versets bibliques
+        const bibleDatabase = {
+            "Genèse": {
+                1: {
+                    1: "Au commencement, Dieu créa les cieux et la terre.",
+                    3: "Dieu dit: Que la lumière soit! Et la lumière fut."
+                },
+                50: {
+                    20: "Vous aviez médité de me faire du mal: Dieu l'a changé en bien."
+                }
+            },
+            "Psaumes": {
+                23: {
+                    1: "L'Éternel est mon berger: je ne manquerai de rien."
+                },
+                119: {
+                    105: "Ta parole est une lampe à mes pieds, Et une lumière sur mon sentier."
+                }
+            },
+            "Jean": {
+                3: {
+                    16: "Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle."
+                },
+                14: {
+                    6: "Jésus lui dit: Je suis le chemin, la vérité, et la vie. Nul ne vient au Père que par moi."
+                }
+            },
+            "Philippiens": {
+                4: {
+                    13: "Je puis tout par celui qui me fortifie."
+                }
+            },
+            "Matthieu": {
+                11: {
+                    28: "Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos."
+                },
+                5: {
+                    16: "Que votre lumière luise ainsi devant les hommes, afin qu'ils voient vos bonnes œuvres, et qu'ils glorifient votre Père qui est dans les cieux."
+                }
+            },
+            "1 Thessaloniciens": {
+                5: {
+                    16: "Soyez toujours joyeux.",
+                    17: "Priez sans cesse.",
+                    18: "Rendez grâces en toutes choses, car c'est à votre égard la volonté de Dieu en Jésus-Christ."
+                }
+            },
+            "Jérémie": {
+                29: {
+                    11: "Car je connais les projets que j'ai formés sur vous, dit l'Éternel, projets de paix et non de malheur, afin de vous donner un avenir et de l'espérance."
+                }
+            },
+            "Ésaïe": {
+                41: {
+                    10: "Ne crains point, car je suis avec toi; Ne promène pas des regards inquiets, car je suis ton Dieu; Je te fortifie, je viens à ton secours, Je te soutiens de ma droite triomphante."
+                }
+            },
+            "Proverbes": {
+                3: {
+                    5: "Confie-toi en l'Éternel de tout ton coeur, Et ne t'appuie pas sur ta sagesse;",
+                    6: "Reconnais-le dans toutes tes voies, Et il aplanira tes sentiers."
+                }
+            },
+            "Romains": {
+                8: {
+                    28: "Nous savons, du reste, que toutes choses concourent au bien de ceux qui aiment Dieu, de ceux qui sont appelés selon son dessein."
+                },
+                12: {
+                    2: "Ne vous conformez pas au siècle présent, mais soyez transformés par le renouvellement de l'intelligence."
+                }
+            },
+            "Galates": {
+                3: {
+                    1: "O Galates, dépourvus de sens! qui vous a fascinés, vous, aux yeux de qui Jésus-Christ a été peint comme crucifié?"
+                },
+                5: {
+                    22: "Mais le fruit de l'Esprit, c'est l'amour, la joie, la paix, la patience, la bonté, la bénignité, la fidélité."
+                }
+            },
+            "Éphésiens": {
+                2: {
+                    8: "Car c'est par la grâce que vous êtes sauvés, par le moyen de la foi. Et cela ne vient pas de vous, c'est le don de Dieu."
+                }
+            },
+            "1 Corinthiens": {
+                13: {
+                    4: "L'amour est patient, il est plein de bonté; l'amour n'est point envieux; l'amour ne se vante point, il ne s'enfle point d'orgueil."
+                }
+            },
+            "2 Corinthiens": {
+                5: {
+                    17: "Si quelqu'un est en Christ, il est une nouvelle créature. Les choses anciennes sont passées; voici, toutes choses sont devenues nouvelles."
+                }
+            },
+            "Colossiens": {
+                3: {
+                    23: "Tout ce que vous faites, faites-le de bon coeur, comme pour le Seigneur et non pour des hommes."
+                }
+            },
+            "Hébreux": {
+                11: {
+                    1: "Or la foi est une ferme assurance des choses qu'on espère, une démonstration de celles qu'on ne voit pas."
+                }
+            },
+            "Jacques": {
+                1: {
+                    22: "Mettez en pratique la parole, et ne vous bornez pas à l'écouter, en vous trompant vous-mêmes par de faux raisonnements."
+                }
+            },
+            "1 Pierre": {
+                5: {
+                    7: "et déchargez-vous sur lui de tous vos soucis, car lui-même prend soin de vous."
+                }
+            },
+            "1 Jean": {
+                1: {
+                    9: "Si nous confessons nos péchés, il est fidèle et juste pour nous les pardonner, et pour nous purifier de toute iniquité."
+                }
+            },
+            "Apocalypse": {
+                21: {
+                    4: "Il essuiera toute larme de leurs yeux, et la mort ne sera plus, et il n'y aura plus ni deuil, ni cri, ni douleur, car les premières choses ont disparu."
+                }
+            }
+        };
 
-<!-- ========================= -->
-<!--   SECTIONS FUNCTIONNELLES   -->
-<!-- ========================= -->
+        // Livres de la Bible avec leur nombre de chapitres
+        const bibleBooks = [
+            { name: "Genèse", chapters: 50 },
+            { name: "Psaumes", chapters: 150 },
+            { name: "Jean", chapters: 21 },
+            { name: "Philippiens", chapters: 4 },
+            { name: "Matthieu", chapters: 28 },
+            { name: "1 Thessaloniciens", chapters: 5 },
+            { name: "Jérémie", chapters: 52 },
+            { name: "Ésaïe", chapters: 66 },
+            { name: "Proverbes", chapters: 31 },
+            { name: "Romains", chapters: 16 },
+            { name: "Galates", chapters: 6 },
+            { name: "Éphésiens", chapters: 6 },
+            { name: "1 Corinthiens", chapters: 16 },
+            { name: "2 Corinthiens", chapters: 13 },
+            { name: "Colossiens", chapters: 4 },
+            { name: "Hébreux", chapters: 13 },
+            { name: "Jacques", chapters: 5 },
+            { name: "1 Pierre", chapters: 5 },
+            { name: "1 Jean", chapters: 5 },
+            { name: "Apocalypse", chapters: 22 }
+        ];
 
-<div id="dashboard" class="section active">
-  <h2>🏠 Tableau de bord</h2>
-  <p>Bienvenue dans votre espace étudiant. Choisissez une section dans le menu.</p>
-</div>
+        // Générer un verset aléatoire
+        function generateRandomVerse() {
+            // Afficher l'indicateur de chargement
+            loadingElement.style.display = 'block';
+            verseTextElement.textContent = "Recherche d'un verset...";
+            verseReferenceElement.textContent = "";
+            
+            // Simuler un délai de chargement
+            setTimeout(() => {
+                try {
+                    // Sélectionner un livre aléatoire
+                    const randomBookIndex = Math.floor(Math.random() * bibleBooks.length);
+                    const randomBook = bibleBooks[randomBookIndex];
+                    
+                    // Vérifier si le livre existe dans la base de données
+                    if (!bibleDatabase[randomBook.name]) {
+                        throw new Error('Livre non trouvé');
+                    }
+                    
+                    // Obtenir les chapitres disponibles pour ce livre
+                    const availableChapters = Object.keys(bibleDatabase[randomBook.name]);
+                    
+                    // Sélectionner un chapitre aléatoire parmi ceux disponibles
+                    const randomChapterIndex = Math.floor(Math.random() * availableChapters.length);
+                    const randomChapter = parseInt(availableChapters[randomChapterIndex]);
+                    
+                    // Obtenir les versets disponibles pour ce chapitre
+                    const availableVerses = Object.keys(bibleDatabase[randomBook.name][randomChapter]);
+                    
+                    // Sélectionner un verset aléatoire parmi ceux disponibles
+                    const randomVerseIndex = Math.floor(Math.random() * availableVerses.length);
+                    const randomVerse = parseInt(availableVerses[randomVerseIndex]);
+                    
+                    // Obtenir le texte du verset
+                    const verseText = bibleDatabase[randomBook.name][randomChapter][randomVerse];
+                    
+                    // Afficher le verset
+                    verseTextElement.textContent = `"${verseText}"`;
+                    verseReferenceElement.textContent = `${randomBook.name} ${randomChapter}:${randomVerse}`;
+                    
+                    // Mettre à jour les statistiques
+                    statsElement.textContent = `Verset ${randomVerse} dans ${randomBook.name} ${randomChapter}`;
+                    
+                } catch (error) {
+                    console.error("Erreur lors de la génération du verset:", error);
+                    verseTextElement.textContent = "Désolé, une erreur s'est produite lors du chargement du verset. Veuillez réessayer.";
+                    verseReferenceElement.textContent = "";
+                } finally {
+                    // Masquer l'indicateur de chargement
+                    loadingElement.style.display = 'none';
+                }
+            }, 800);
+        }
 
-<div id="cours" class="section">
-  <h2>📚 Cours</h2>
-  <ul>
-    <li>Introduction à la démographie – <button onclick="alert('Cours ouvert !')">Ouvrir</button></li>
-    <li>Statistiques appliquées – <button onclick="alert('Cours ouvert !')">Ouvrir</button></li>
-    <li>Économie du développement – <button onclick="alert('Cours ouvert !')">Ouvrir</button></li>
-  </ul>
-</div>
+        // Copier le verset dans le presse-papier
+        function copyVerse() {
+            const verseToCopy = `${verseTextElement.textContent} - ${verseReferenceElement.textContent}`;
+            
+            // Vérifier si le texte est un verset valide
+            if (verseTextElement.textContent.includes('Cliquez') || verseTextElement.textContent.includes('erreur')) {
+                showNotification('Veuillez d\'abord générer un verset valide');
+                return;
+            }
+            
+            navigator.clipboard.writeText(verseToCopy)
+                .then(() => {
+                    showNotification('Verset copié avec succès!');
+                })
+                .catch(err => {
+                    console.error('Erreur lors de la copie: ', err);
+                    showNotification('Erreur lors de la copie');
+                });
+        }
 
-<div id="ressources" class="section">
-  <h2>📁 Ressources (PDF / TD / Examens)</h2>
-  <button onclick="alert('Téléchargement...')">📄 Télécharger TD 1</button><br><br>
-  <button onclick="alert('Téléchargement...')">📄 Télécharger examen corrigé</button>
-</div>
+        // Partager le verset
+        function shareVerse() {
+            const verseToShare = `${verseTextElement.textContent} - ${verseReferenceElement.textContent}`;
+            
+            // Vérifier si le texte est un verset valide
+            if (verseTextElement.textContent.includes('Cliquez') || verseTextElement.textContent.includes('erreur')) {
+                showNotification('Veuillez d\'abord générer un verset valide');
+                return;
+            }
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Verset Biblique',
+                    text: verseToShare,
+                    url: window.location.href
+                })
+                .then(() => console.log('Partage réussi'))
+                .catch((error) => console.log('Erreur de partage', error));
+            } else {
+                // Fallback pour les navigateurs qui ne supportent pas l'API de partage
+                copyVerse();
+                showNotification('Verset copié - Partagez-le où vous voulez!');
+            }
+        }
 
-<div id="evaluations" class="section">
-  <h2>📝 Évaluations</h2>
-  <p>Tests disponibles :</p>
-  <button onclick="alert('Quiz démographie lancé !')">Quiz 1 — Démographie</button><br><br>
-  <button onclick="alert('Quiz statistiques lancé !')">Quiz 2 — Statistiques</button>
-</div>
+        // Afficher une notification
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
 
-<div id="forum" class="section">
-  <h2>💬 Forum</h2>
-  <p>Zone d'échanges entre étudiants :</p>
-  <button onclick="alert('Poster un message...')">Écrire une question</button>
-</div>
+        // Événements
+        generateBtn.addEventListener('click', generateRandomVerse);
+        copyBtn.addEventListener('click', copyVerse);
+        shareBtn.addEventListener('click', shareVerse);
 
-<div id="orientation" class="section">
-  <h2>🎯 Orientation</h2>
-  <p>Choisissez votre domaine :</p>
-  <ul>
-    <li>Sciences sociales</li>
-    <li>Statistiques & Data</li>
-    <li>Économie et gestion</li>
-    <li>Santé / Médecine</li>
-  </ul>
-</div>
-
-<div id="annonces" class="section">
-  <h2>📣 Annonces, bourses, stages</h2>
-  <ul>
-    <li>Bourse d’étude — Deadline 10 décembre</li>
-    <li>Stage en démographie — UNFPA</li>
-  </ul>
-</div>
-
-<div id="contact" class="section">
-  <h2>☎️ Contact</h2>
-  <p>Email : support@plateforme.com</p>
-  <button onclick="alert('Message envoyé !')">Envoyer un message</button>
-</div>
-
-<script>
-function showSection(id) {
-  const sections = document.querySelectorAll('.section');
-  sections.forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-</script>
-
+        // Générer un verset au chargement de la page
+        generateRandomVerse();
+    </script>
 </body>
 </html>
